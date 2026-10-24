@@ -132,3 +132,4 @@ node src/server.js
 ## 👩‍💻 Contributors
 - **Sonia** — Backend Architecture, PostgreSQL Database Engineering, REST APIs, Authentication & External Integrations
 - **Simran, Shweta, Sundaram, Shreya** — MedIntelliX Healthcare Team
+"# MedIntelliX" 

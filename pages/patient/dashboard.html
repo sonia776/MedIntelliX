@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Dashboard | MedIntelliX</title>
+
+    <meta
+        name="description"
+        content="Patient dashboard for the MedIntelliX healthcare platform."
+    >
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Shared and Patient Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/patient.css">
+</head>
+
+<body class="portal-body">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Patient Portal -->
+    <div class="portal-layout">
+
+        <!-- Sidebar -->
+        <aside class="portal-sidebar" id="patientSidebar">
+
+            <a href="dashboard.html" class="portal-brand">
+                <span class="portal-brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <span class="portal-brand-text">
+                    MedIntelliX
+                    <small>Patient Portal</small>
+                </span>
+            </a>
+
+            <div class="sidebar-section-label">
+                MAIN MENU
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Patient navigation">
+
+                <a href="dashboard.html" class="sidebar-link active" aria-current="page">
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="health-records.html" class="sidebar-link">
+                    <i class="bi bi-folder2-open"></i>
+                    <span>Health Records</span>
+                </a>
+
+                <a href="medical-reports.html" class="sidebar-link">
+                    <i class="bi bi-file-earmark-medical"></i>
+                    <span>Medical Reports</span>
+                </a>
+
+                <a href="medications.html" class="sidebar-link">
+                    <i class="bi bi-capsule"></i>
+                    <span>Medications</span>
+                </a>
+
+                <a href="appointments.html" class="sidebar-link">
+                    <i class="bi bi-calendar2-check"></i>
+                    <span>Appointments</span>
+                </a>
+
+                <a href="doctors.html" class="sidebar-link">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Doctors</span>
+                </a>
+
+                <a href="health-timeline.html" class="sidebar-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Health Timeline</span>
+                </a>
+
+                <div class="sidebar-section-label sidebar-section-spaced">
+                    ACCOUNT
+                </div>
+
+                <a href="profile.html" class="sidebar-link">
+                    <i class="bi bi-person-circle"></i>
+                    <span>My Profile</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <div class="sidebar-help">
+                    <span class="help-icon">
+                        <i class="bi bi-headset"></i>
+                    </span>
+
+                    <div>
+                        <strong>Need assistance?</strong>
+                        <small>Help and support</small>
+                    </div>
+                </div>
+
+                <a href="../login.html" class="sidebar-link logout-link" id="logoutLink">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Sign out</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Area -->
+        <div class="portal-main">
+
+            <!-- Topbar -->
+            <header class="portal-topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        type="button"
+                        class="sidebar-toggle"
+                        id="sidebarToggle"
+                        aria-label="Open navigation menu"
+                        aria-controls="patientSidebar"
+                        aria-expanded="false"
+                    >
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="breadcrumb-text">
+                        <span>Patient Portal</span>
+                        <i class="bi bi-chevron-right"></i>
+                        <strong>Dashboard</strong>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="portal-status">
+                        <span class="status-dot"></span>
+                        Demo Mode
+                    </div>
+
+                    <button
+                        type="button"
+                        class="topbar-icon-button"
+                        id="notificationButton"
+                        aria-label="Notifications"
+                    >
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-indicator"></span>
+                    </button>
+
+                    <a href="profile.html" class="topbar-profile">
+
+                        <span class="profile-avatar" id="profileInitials">
+                            P
+                        </span>
+
+                        <span class="topbar-profile-info">
+                            <strong id="patientName">Patient</strong>
+                            <small>Patient Account</small>
+                        </span>
+
+                        <i class="bi bi-chevron-down profile-chevron"></i>
+
+                    </a>
+
+                </div>
+
+            </header>
+
+
+            <!-- Dashboard Content -->
+            <main class="portal-content">
+
+                <!-- Welcome -->
+                <section class="dashboard-welcome">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            YOUR PERSONAL HEALTHSPACE
+                        </span>
+
+                        <h1>
+                            Welcome back, <span id="welcomeName">Patient</span>
+                        </h1>
+
+                        <p>
+                            Keep track of your health information and
+                            stay connected with your care journey.
+                        </p>
+                    </div>
+
+                    <a href="appointments.html" class="btn dashboard-primary-button">
+                        <i class="bi bi-calendar-plus"></i>
+                        Book an appointment
+                    </a>
+
+                </section>
+
+
+                <!-- Demo Notice -->
+                <div class="demo-notice" role="note">
+                    <i class="bi bi-info-circle"></i>
+
+                    <p>
+                        <strong>Prototype preview:</strong>
+                        The information shown below is sample interface content,
+                        not actual patient data. No medical records are connected.
+                    </p>
+                </div>
+
+
+                <!-- Summary Cards -->
+                <section class="dashboard-stats" aria-label="Health overview">
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-teal">
+                                <i class="bi bi-folder2-open"></i>
+                            </span>
+
+                            <span class="stat-label">Health Records</span>
+                        </div>
+
+                        <div class="stat-card-value" id="recordsCount">
+                            04
+                        </div>
+
+                        <p class="stat-card-description">
+                            Records in this demo
+                        </p>
+
+                        <a href="health-records.html" class="stat-card-link">
+                            View records
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-blue">
+                                <i class="bi bi-file-earmark-medical"></i>
+                            </span>
+
+                            <span class="stat-label">Medical Reports</span>
+                        </div>
+
+                        <div class="stat-card-value" id="reportsCount">
+                            03
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample reports
+                        </p>
+
+                        <a href="medical-reports.html" class="stat-card-link">
+                            View reports
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-coral">
+                                <i class="bi bi-capsule"></i>
+                            </span>
+
+                            <span class="stat-label">Medications</span>
+                        </div>
+
+                        <div class="stat-card-value" id="medicationsCount">
+                            02
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample medication entries
+                        </p>
+
+                        <a href="medications.html" class="stat-card-link">
+                            View medications
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-purple">
+                                <i class="bi bi-calendar2-check"></i>
+                            </span>
+
+                            <span class="stat-label">Appointments</span>
+                        </div>
+
+                        <div class="stat-card-value" id="appointmentsCount">
+                            01
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample upcoming appointment
+                        </p>
+
+                        <a href="appointments.html" class="stat-card-link">
+                            View appointments
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                </section>
+
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+
+                    <!-- Recent Health Activity -->
+                    <section class="dashboard-panel activity-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+                                <h2>Recent Health Activity</h2>
+                                <p>A preview of your health timeline</p>
+                            </div>
+
+                            <a href="health-timeline.html" class="panel-action">
+                                View timeline
+                            </a>
+
+                        </div>
+
+                        <div class="activity-list">
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-teal">
+                                    <i class="bi bi-file-earmark-medical"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Medical report added</h3>
+                                    <p>A sample report was added to the demo timeline.</p>
+                                    <span class="activity-date">Demo entry · Recent</span>
+                                </div>
+
+                                <span class="activity-tag">Report</span>
+
+                            </article>
+
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-blue">
+                                    <i class="bi bi-calendar-check"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Appointment scheduled</h3>
+                                    <p>A sample appointment appears in this preview.</p>
+                                    <span class="activity-date">Demo entry</span>
+                                </div>
+
+                                <span class="activity-tag">Visit</span>
+
+                            </article>
+
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-coral">
+                                    <i class="bi bi-capsule"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Medication entry updated</h3>
+                                    <p>A sample medication entry was updated.</p>
+                                    <span class="activity-date">Demo entry</span>
+                                </div>
+
+                                <span class="activity-tag">Medicine</span>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Quick Actions -->
+                    <section class="dashboard-panel quick-actions-panel">
+
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Quick Actions</h2>
+                                <p>Navigate to your health tools</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions-list">
+
+                            <a href="health-records.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-folder-plus"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Health records</strong>
+                                    <small>Browse your records</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="medical-reports.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Medical reports</strong>
+                                    <small>Review sample reports</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="appointments.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Appointments</strong>
+                                    <small>Explore appointment options</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="profile.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-person-gear"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>My profile</strong>
+                                    <small>View profile settings</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- Health Information Panel -->
+                <section class="health-info-panel">
+
+                    <div class="health-info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div class="health-info-content">
+                        <h2>Your health information matters</h2>
+
+                        <p>
+                            In the live application, you will be able to review
+                            authorised records and manage available privacy and
+                            consent settings. Those features are not connected yet.
+                        </p>
+                    </div>
+
+                    <a href="profile.html" class="health-info-link">
+                        Explore profile
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </section>
+
+
+                <!-- Footer -->
+                <footer class="portal-footer">
+                    <p>
+                        © <span id="dashboardYear"></span> MedIntelliX.
+                        Connected healthcare, designed responsibly.
+                    </p>
+
+                    <span>
+                        Prototype interface · Not for clinical use
+                    </span>
+                </footer>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Shared and Patient JavaScript -->
+    <script src="../../js/common.js"></script>
+    <script src="../../js/patient/dashboard.js"></script>
+
+</body>
+</html>

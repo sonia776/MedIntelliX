@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In | MedIntelliX</title>
+
+    <meta
+        name="description"
+        content="Sign in to your MedIntelliX healthcare portal."
+    >
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Custom Login CSS -->
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+
+    <!-- Background Decoration -->
+    <div class="login-background">
+        <div class="background-circle circle-one"></div>
+        <div class="background-circle circle-two"></div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="login-container">
+
+        <!-- Left Information Panel -->
+        <section class="login-intro">
+
+            <a href="../index.html" class="brand-logo">
+                <span class="brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <span>
+                    MedIntelliX
+                    <small>Intelligent Healthcare. Connected Care.</small>
+                </span>
+            </a>
+
+            <div class="intro-content">
+                <span class="intro-label">
+                    <i class="bi bi-shield-check"></i>
+                    Your Healthcare, Connected
+                </span>
+
+                <h1>
+                    Better access to
+                    <span>better healthcare.</span>
+                </h1>
+
+                <p>
+                    Access your healthcare workspace through one
+                    connected platform designed to support patients,
+                    healthcare institutions, and public-health teams.
+                </p>
+
+                <div class="intro-features">
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-file-earmark-medical"></i>
+                        </span>
+
+                        <div>
+                            <h3>Connected Health Records</h3>
+                            <p>Keep authorised healthcare information organised.</p>
+                        </div>
+                    </div>
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-hospital"></i>
+                        </span>
+
+                        <div>
+                            <h3>Coordinated Care</h3>
+                            <p>Support communication across healthcare services.</p>
+                        </div>
+                    </div>
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+
+                        <div>
+                            <h3>Privacy-Focused Design</h3>
+                            <p>Build around permissions and responsible data access.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <p class="intro-footer">
+                © <span id="current-year"></span> MedIntelliX.
+                Built for connected healthcare.
+            </p>
+
+        </section>
+
+
+        <!-- Right Login Panel -->
+        <section class="login-panel">
+
+            <div class="login-card">
+
+                <div class="mobile-brand">
+                    <a href="../index.html" class="brand-logo">
+                        <span class="brand-icon">
+                            <i class="bi bi-heart-pulse-fill"></i>
+                        </span>
+
+                        <span>
+                            MedIntelliX
+                            <small>Connected Healthcare</small>
+                        </span>
+                    </a>
+                </div>
+
+                <div class="login-heading">
+                    <span class="welcome-label">WELCOME BACK</span>
+
+                    <h2>Sign in to your account</h2>
+
+                    <p>
+                        Select your portal and enter your login credentials.
+                    </p>
+                </div>
+
+
+                <!-- Portal Selection -->
+                <div class="portal-selection">
+
+                    <label for="userRole" class="form-label">
+                        Choose your portal
+                    </label>
+
+                    <div class="portal-options">
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="userRole"
+                                value="patient"
+                                checked
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-person-heart"></i>
+                                <span>Patient</span>
+                            </span>
+                        </label>
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="userRole"
+                                value="hospital"
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-hospital"></i>
+                                <span>Hospital</span>
+                            </span>
+                        </label>
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="userRole"
+                                value="government"
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-building"></i>
+                                <span>Government</span>
+                            </span>
+                        </label>
+
+                    </div>
+                </div>
+
+
+                <!-- Login Form -->
+                <form id="loginForm" novalidate>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-envelope input-icon"></i>
+
+                            <input
+                                type="email"
+                                class="form-control custom-input"
+                                id="email"
+                                name="email"
+                                placeholder="you@example.com"
+                                autocomplete="username"
+                                required
+                            >
+                        </div>
+
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
+                        </div>
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <div class="password-label-row">
+                            <label for="password" class="form-label">
+                                Password
+                            </label>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock input-icon"></i>
+
+                            <input
+                                type="password"
+                                class="form-control custom-input"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="togglePassword"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="invalid-feedback">
+                            Please enter your password.
+                        </div>
+                    </div>
+
+
+                    <!-- Remember Me -->
+                    <div class="login-options">
+                        <label class="remember-option">
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                name="rememberMe"
+                            >
+
+                            <span>Remember me</span>
+                        </label>
+
+                        <a href="#" id="forgotPasswordLink">
+                            Forgot password?
+                        </a>
+                    </div>
+
+
+                    <!-- Status / Error Message -->
+                    <div
+                        id="loginMessage"
+                        class="login-message"
+                        role="status"
+                        aria-live="polite"
+                        hidden
+                    ></div>
+
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        class="btn login-button"
+                        id="loginButton"
+                    >
+                        <span>Sign In</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+
+                </form>
+
+
+                <!-- Registration -->
+                <div class="register-prompt">
+                    <p>
+                        Don't have an account?
+                        <a href="register.html">Create an account</a>
+                    </p>
+                </div>
+
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <i class="bi bi-shield-lock-fill"></i>
+
+                    <p>
+                        Your healthcare information should only be
+                        accessible to authorised users.
+                    </p>
+                </div>
+
+
+                <div class="back-home">
+                    <a href="../index.html">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to homepage
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Custom Authentication JavaScript -->
+    <script src="../js/auth.js"></script>
+
+</body>
+</html>

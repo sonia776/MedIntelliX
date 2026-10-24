@@ -1,0 +1,654 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Patient | MedIntelliX</title>
+    <meta name="description" content="Register a patient in the MedIntelliX hospital portal demo.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/hospital.css">
+
+    <style>
+        .registration-layout {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .registration-card {
+            background: #fff;
+            border: 1px solid #e3eaf0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+
+        .registration-card-header {
+            padding: 21px 24px;
+            border-bottom: 1px solid #edf1f5;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .registration-section-icon {
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #e5f4f3;
+            color: #187c80;
+            font-size: 19px;
+        }
+
+        .registration-card-header h2 {
+            font-size: 16px;
+            font-weight: 750;
+            margin: 0 0 4px;
+            color: #20313f;
+        }
+
+        .registration-card-header p {
+            margin: 0;
+            color: #637381;
+            font-size: 12px;
+        }
+
+        .registration-card-body {
+            padding: 24px;
+        }
+
+        .registration-card .form-label {
+            color: #344655;
+            font-size: 13px;
+            font-weight: 650;
+            margin-bottom: 7px;
+        }
+
+        .registration-card .form-control,
+        .registration-card .form-select {
+            border-color: #dfe7ed;
+            border-radius: 9px;
+            min-height: 44px;
+            font-size: 13px;
+        }
+
+        .registration-card textarea.form-control {
+            min-height: 92px;
+        }
+
+        .registration-card .form-control:focus,
+        .registration-card .form-select:focus {
+            border-color: #187c80;
+            box-shadow: 0 0 0 3px rgba(24, 124, 128, 0.11);
+        }
+
+        .required-mark {
+            color: #d65b50;
+        }
+
+        .section-note {
+            color: #84919d;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .consent-panel {
+            background: #f7f9fc;
+            border: 1px solid #e3eaf0;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .consent-panel .form-check-label {
+            color: #425466;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .registration-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 20px 24px;
+            background: #fff;
+            border: 1px solid #e3eaf0;
+            border-radius: 14px;
+        }
+
+        .registration-actions .btn {
+            min-height: 43px;
+            border-radius: 9px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .btn-medintellix {
+            background: #187c80;
+            color: #fff;
+            border: 1px solid #187c80;
+        }
+
+        .btn-medintellix:hover {
+            background: #12666a;
+            color: #fff;
+        }
+
+        .demo-success {
+            border: 1px solid #b7e4cb;
+            border-radius: 12px;
+            background: #edf9f1;
+            color: #205c3a;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .demo-success h2 {
+            font-size: 16px;
+            font-weight: 750;
+            margin-bottom: 6px;
+        }
+
+        .demo-success p {
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .demo-reference {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #cde8d6;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-weight: 750;
+            letter-spacing: .04em;
+        }
+
+        .privacy-note {
+            font-size: 12px;
+            line-height: 1.7;
+            color: #637381;
+        }
+
+        @media (max-width: 575px) {
+            .registration-card-header,
+            .registration-card-body {
+                padding: 17px;
+            }
+
+            .registration-actions {
+                padding: 16px;
+            }
+
+            .registration-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="portal-layout">
+
+    <!-- Sidebar -->
+    <aside class="portal-sidebar" id="patientSidebar">
+        <div class="sidebar-brand">
+            <a href="../../index.html" class="brand-link text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span class="brand-text">MedIntelliX<small>Hospital Portal</small></span>
+            </a>
+        </div>
+
+        <div class="sidebar-section-label">WORKSPACE</div>
+
+        <nav class="sidebar-nav" aria-label="Hospital navigation">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="patients.html" class="sidebar-link">
+                <i class="bi bi-people"></i><span>Patients</span>
+            </a>
+            <a href="register-patient.html" class="sidebar-link active" aria-current="page">
+                <i class="bi bi-person-plus"></i><span>Register Patient</span>
+            </a>
+            <a href="consultations.html" class="sidebar-link">
+                <i class="bi bi-calendar2-check"></i><span>Consultations</span>
+            </a>
+            <a href="medical-reports.html" class="sidebar-link">
+                <i class="bi bi-file-earmark-medical"></i><span>Medical Reports</span>
+            </a>
+            <a href="staff.html" class="sidebar-link">
+                <i class="bi bi-person-badge"></i><span>Staff & Permissions</span>
+            </a>
+            <a href="hospital-profile.html" class="sidebar-link">
+                <i class="bi bi-hospital"></i><span>Hospital Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help-card">
+                <i class="bi bi-shield-check"></i>
+                <strong>Patient privacy matters</strong>
+                <p>Collect only information that is necessary and authorised.</p>
+            </div>
+            <a href="#" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main content -->
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                        aria-label="Open navigation" aria-controls="patientSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <div class="topbar-page-label">Hospital workspace</div>
+                    <h1 class="topbar-title">Register Patient</h1>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <button type="button" class="topbar-icon-btn" id="notificationButton"
+                        aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <div class="topbar-user">
+                    <div class="topbar-avatar">EH</div>
+                    <div class="topbar-user-info">
+                        <strong id="hospitalNameShort">Example Hospital</strong>
+                        <span>Hospital staff</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="registration-layout">
+
+                <div class="text-secondary small mb-3">
+                    <a href="dashboard.html" class="text-decoration-none">Dashboard</a>
+                    <i class="bi bi-chevron-right mx-1"></i>
+                    <a href="patients.html" class="text-decoration-none">Patients</a>
+                    <i class="bi bi-chevron-right mx-1"></i>
+                    Register Patient
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="h4 fw-bold mb-2">Register a new patient</h2>
+                    <p class="text-secondary mb-0">
+                        Enter the required information to preview a patient enrolment.
+                    </p>
+                </div>
+
+                <div class="portal-notice mb-4" role="note">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Demo mode is active. Do not enter real patient details.
+                    This form does not send information to a server or save it permanently.
+                </div>
+
+                <div id="registrationSuccess" class="demo-success d-none"
+                     role="status" aria-live="polite">
+                    <div class="d-flex gap-3 align-items-start">
+                        <i class="bi bi-check-circle-fill fs-3"></i>
+                        <div>
+                            <h2>Demo registration preview created</h2>
+                            <p>
+                                Your form passed validation. This is only a temporary
+                                demonstration reference, not a saved patient registration.
+                            </p>
+                            <div class="small mb-2">Demo reference</div>
+                            <div class="demo-reference" id="demoReference">MIX-DEMO</div>
+                            <div class="mt-3">
+                                <a href="patients.html" class="btn btn-sm btn-outline-success">
+                                    View patient directory
+                                </a>
+                                <button type="button" id="registerAnother"
+                                        class="btn btn-sm btn-success ms-1">
+                                    Register another
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="registerPatientForm" novalidate>
+
+                    <!-- Personal information -->
+                    <section class="registration-card">
+                        <div class="registration-card-header">
+                            <div class="registration-section-icon">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div>
+                                <h2>Personal information</h2>
+                                <p>Basic details for identifying the patient.</p>
+                            </div>
+                        </div>
+
+                        <div class="registration-card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="firstName" class="form-label">
+                                        First name <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="firstName"
+                                           name="firstName" autocomplete="given-name"
+                                           maxlength="60" required>
+                                    <div class="invalid-feedback">Enter a valid first name.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="lastName" class="form-label">
+                                        Last name <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="lastName"
+                                           name="lastName" autocomplete="family-name"
+                                           maxlength="60" required>
+                                    <div class="invalid-feedback">Enter a valid last name.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="dateOfBirth" class="form-label">
+                                        Date of birth <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="dateOfBirth"
+                                           name="dateOfBirth" autocomplete="bday" required>
+                                    <div class="invalid-feedback">Choose a valid date of birth.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="gender" class="form-label">
+                                        Gender <span class="required-mark">*</span>
+                                    </label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="">Select an option</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Non-binary">Non-binary</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                        <option value="Self-describe">Self-describe</option>
+                                    </select>
+                                    <div class="invalid-feedback">Select an option.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6 d-none" id="selfDescribeGroup">
+                                    <label for="genderDescription" class="form-label">
+                                        Gender description
+                                    </label>
+                                    <input type="text" class="form-control" id="genderDescription"
+                                           maxlength="60" placeholder="Optional">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="bloodGroup" class="form-label">Blood group</label>
+                                    <select class="form-select" id="bloodGroup" name="bloodGroup">
+                                        <option value="">Not provided</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="Unknown">Unknown</option>
+                                    </select>
+                                    <div class="section-note">
+                                        Optional; verify through an appropriate clinical process.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Contact information -->
+                    <section class="registration-card">
+                        <div class="registration-card-header">
+                            <div class="registration-section-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div>
+                                <h2>Contact information</h2>
+                                <p>How the patient can be contacted.</p>
+                            </div>
+                        </div>
+
+                        <div class="registration-card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="email" class="form-label">
+                                        Email address <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="email" class="form-control" id="email"
+                                           name="email" autocomplete="email"
+                                           maxlength="254" required>
+                                    <div class="invalid-feedback">Enter a valid email address.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="phone" class="form-label">
+                                        Phone number <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control" id="phone"
+                                           name="phone" autocomplete="tel"
+                                           inputmode="tel" maxlength="20"
+                                           placeholder="+91 98765 43210" required>
+                                    <div class="invalid-feedback">
+                                        Enter a valid phone number with 7–15 digits.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" id="address" name="address"
+                                              autocomplete="street-address" maxlength="250"
+                                              placeholder="Street or locality (optional)"></textarea>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city"
+                                           name="city" autocomplete="address-level2"
+                                           maxlength="80">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="postalCode" class="form-label">Postal code</label>
+                                    <input type="text" class="form-control" id="postalCode"
+                                           name="postalCode" autocomplete="postal-code"
+                                           inputmode="numeric" maxlength="12">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Emergency contact -->
+                    <section class="registration-card">
+                        <div class="registration-card-header">
+                            <div class="registration-section-icon">
+                                <i class="bi bi-person-hearts"></i>
+                            </div>
+                            <div>
+                                <h2>Emergency contact</h2>
+                                <p>Optional contact details for urgent situations.</p>
+                            </div>
+                        </div>
+
+                        <div class="registration-card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="emergencyName" class="form-label">
+                                        Contact person's name
+                                    </label>
+                                    <input type="text" class="form-control" id="emergencyName"
+                                           name="emergencyName" maxlength="120">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="emergencyRelationship" class="form-label">
+                                        Relationship to patient
+                                    </label>
+                                    <select class="form-select" id="emergencyRelationship"
+                                            name="emergencyRelationship">
+                                        <option value="">Select relationship</option>
+                                        <option value="Parent">Parent</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Sibling">Sibling</option>
+                                        <option value="Child">Child</option>
+                                        <option value="Friend">Friend</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="emergencyPhone" class="form-label">
+                                        Emergency contact number
+                                    </label>
+                                    <input type="tel" class="form-control" id="emergencyPhone"
+                                           name="emergencyPhone" inputmode="tel"
+                                           maxlength="20" placeholder="+91 98765 43210">
+                                    <div class="invalid-feedback">
+                                        Enter a valid phone number with 7–15 digits.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Enrolment details -->
+                    <section class="registration-card">
+                        <div class="registration-card-header">
+                            <div class="registration-section-icon">
+                                <i class="bi bi-clipboard2-check"></i>
+                            </div>
+                            <div>
+                                <h2>Enrolment details</h2>
+                                <p>Administrative information for this demonstration.</p>
+                            </div>
+                        </div>
+
+                        <div class="registration-card-body">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="patientType" class="form-label">
+                                        Registration category <span class="required-mark">*</span>
+                                    </label>
+                                    <select class="form-select" id="patientType"
+                                            name="patientType" required>
+                                        <option value="">Select category</option>
+                                        <option value="Outpatient">Outpatient</option>
+                                        <option value="Inpatient">Inpatient</option>
+                                        <option value="Follow-up">Follow-up</option>
+                                        <option value="Preventive care">Preventive care</option>
+                                    </select>
+                                    <div class="invalid-feedback">Choose a registration category.</div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="registrationDate" class="form-label">
+                                        Registration date <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="registrationDate"
+                                           name="registrationDate" required>
+                                    <div class="invalid-feedback">
+                                        Choose today or an earlier valid date.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="registrationNotes" class="form-label">
+                                        Administrative notes
+                                    </label>
+                                    <textarea class="form-control" id="registrationNotes"
+                                              name="registrationNotes" maxlength="500"
+                                              placeholder="Optional administrative notes. Do not enter real patient information in demo mode."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Consent and privacy -->
+                    <section class="registration-card">
+                        <div class="registration-card-header">
+                            <div class="registration-section-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                            <div>
+                                <h2>Consent & privacy acknowledgement</h2>
+                                <p>A reminder for the future production workflow.</p>
+                            </div>
+                        </div>
+
+                        <div class="registration-card-body">
+                            <div class="consent-panel">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="consentAcknowledged" required>
+                                    <label class="form-check-label" for="consentAcknowledged">
+                                        I understand that patient information must be collected
+                                        and processed only with the appropriate authorisation,
+                                        lawful basis, privacy safeguards and applicable consent
+                                        requirements. I understand that this demo form does not
+                                        record legally valid patient consent.
+                                        <span class="required-mark">*</span>
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Please acknowledge this demonstration notice.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="privacy-note mt-3 mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Before production use, implement secure authentication, server-side
+                                validation, access controls, audit logging, protected storage and
+                                an appropriate consent-management process.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Actions -->
+                    <div class="registration-actions">
+                        <div class="small text-secondary">
+                            <span class="required-mark">*</span> Required fields
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="reset" class="btn btn-outline-secondary" id="clearForm">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Clear form
+                            </button>
+                            <button type="submit" class="btn btn-medintellix">
+                                <i class="bi bi-person-check me-2"></i>Preview registration
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <footer class="py-4 text-secondary small">
+                    © <span id="hospitalYear"></span> MedIntelliX · Hospital Portal
+                </footer>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/hospital/register-patient.js"></script>
+</body>
+</html>

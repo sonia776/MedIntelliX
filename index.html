@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="MedIntelliX helps patients organise health records, track medications, and stay connected with their healthcare journey.">
+
+    <meta name="theme-color" content="#187c80">
+
+    <title>MedIntelliX | Your Health, Connected</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
+        <div class="container">
+
+            <a class="navbar-brand brand" href="index.html">
+                <span class="brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+                <span>MedIntelliX</span>
+            </a>
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How it works</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About us</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+
+                <div class="navbar-actions d-flex align-items-center gap-3">
+                    <label for="languageSelect" class="visually-hidden">
+                        Select language
+                    </label>
+
+                    <select id="languageSelect"
+                            class="form-select form-select-sm language-select"
+                            aria-label="Select language">
+                        <option value="en" selected>English</option>
+                        <option value="hi">हिन्दी</option>
+                    </select>
+
+                    <a href="pages/login.html"
+                       class="btn btn-outline-primary-custom">
+                        Sign in
+                    </a>
+
+                    <a href="pages/register.html"
+                       class="btn btn-primary-custom">
+                        Get started
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+
+    <main>
+
+        <!-- ==================== HERO SECTION ==================== -->
+        <section class="hero-section" id="home">
+            <div class="container">
+                <div class="row align-items-center g-5">
+
+                    <div class="col-lg-6">
+                        <span class="eyebrow">
+                            <i class="bi bi-shield-check"></i>
+                            A smarter healthcare experience
+                        </span>
+
+                        <h1 class="hero-title mt-4">
+                            Your health.
+                            <span>One connected journey.</span>
+                        </h1>
+
+                        <p class="hero-description mt-4">
+                            Keep your medical records organised, understand
+                            your healthcare journey, and stay informed about
+                            your medications and consultations — all in one place.
+                        </p>
+
+                        <div class="hero-actions d-flex flex-wrap gap-3 mt-4">
+                            <a href="pages/register.html"
+                               class="btn btn-primary-custom btn-lg">
+                                Get started
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+
+                            <a href="#how-it-works"
+                               class="btn btn-outline-primary-custom btn-lg">
+                                Explore the platform
+                            </a>
+                        </div>
+
+                        <div class="hero-trust d-flex flex-wrap gap-4 mt-4">
+                            <span>
+                                <i class="bi bi-folder2-open"></i>
+                                Organised health records
+                            </span>
+
+                            <span>
+                                <i class="bi bi-shield-lock"></i>
+                                Privacy-conscious design
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="hero-visual">
+
+                            <div class="hero-decoration decoration-one"></div>
+                            <div class="hero-decoration decoration-two"></div>
+
+                            <div class="health-preview-card">
+                                <div class="d-flex justify-content-between
+                                            align-items-center mb-4">
+                                    <div>
+                                        <p class="small-label mb-1">
+                                            YOUR HEALTHSPACE
+                                        </p>
+                                        <h5 class="mb-0">Health overview</h5>
+                                    </div>
+
+                                    <span class="preview-icon">
+                                        <i class="bi bi-heart-pulse"></i>
+                                    </span>
+                                </div>
+
+                                <div class="health-preview-item">
+                                    <span class="preview-item-icon blue-icon">
+                                        <i class="bi bi-file-earmark-medical"></i>
+                                    </span>
+
+                                    <div class="flex-grow-1">
+                                        <h6>Medical records</h6>
+                                        <p>Keep important records together</p>
+                                    </div>
+
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+
+                                <div class="health-preview-item">
+                                    <span class="preview-item-icon teal-icon">
+                                        <i class="bi bi-capsule"></i>
+                                    </span>
+
+                                    <div class="flex-grow-1">
+                                        <h6>Medications</h6>
+                                        <p>Review your medication information</p>
+                                    </div>
+
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+
+                                <div class="health-preview-item">
+                                    <span class="preview-item-icon coral-icon">
+                                        <i class="bi bi-calendar2-check"></i>
+                                    </span>
+
+                                    <div class="flex-grow-1">
+                                        <h6>Appointments</h6>
+                                        <p>Keep track of planned consultations</p>
+                                    </div>
+
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+
+                                <div class="preview-note mt-4">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Your healthcare information, organised
+                                    around your journey.
+                                </div>
+                            </div>
+
+                            <div class="floating-card floating-card-top">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Connected care
+                            </div>
+
+                            <div class="floating-card floating-card-bottom">
+                                <i class="bi bi-clock-history"></i>
+                                Your health timeline
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== BENEFITS STRIP ==================== -->
+        <section class="benefits-strip">
+            <div class="container">
+                <div class="row g-4 text-center">
+
+                    <div class="col-6 col-lg-3">
+                        <div class="benefit-item">
+                            <i class="bi bi-folder2-open"></i>
+                            <span>Records in one place</span>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-lg-3">
+                        <div class="benefit-item">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Health history</span>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-lg-3">
+                        <div class="benefit-item">
+                            <i class="bi bi-capsule"></i>
+                            <span>Medication tracking</span>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-lg-3">
+                        <div class="benefit-item">
+                            <i class="bi bi-people"></i>
+                            <span>Connected care</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== SERVICES ==================== -->
+        <section class="section-padding" id="services">
+            <div class="container">
+
+                <div class="section-heading text-center mx-auto">
+                    <span class="eyebrow">WHAT WE OFFER</span>
+
+                    <h2 class="section-title mt-3">
+                        Healthcare information, made easier
+                    </h2>
+
+                    <p class="section-description mt-3">
+                        A central place to organise essential health information
+                        and make your healthcare journey easier to follow.
+                    </p>
+                </div>
+
+                <div class="row g-4 mt-4">
+
+                    <div class="col-md-6 col-lg-3">
+                        <article class="service-card h-100">
+                            <div class="service-icon service-icon-blue">
+                                <i class="bi bi-file-earmark-medical"></i>
+                            </div>
+
+                            <h5>Health records</h5>
+
+                            <p>
+                                Keep your medical history, diagnoses,
+                                allergies, and important health details organised.
+                            </p>
+
+                            <a href="pages/login.html"
+                               class="service-link">
+                                Explore records
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <article class="service-card h-100">
+                            <div class="service-icon service-icon-teal">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+
+                            <h5>Health timeline</h5>
+
+                            <p>
+                                Follow your healthcare journey through
+                                consultations, reports, and recorded events.
+                            </p>
+
+                            <a href="pages/login.html"
+                               class="service-link">
+                                View your journey
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <article class="service-card h-100">
+                            <div class="service-icon service-icon-coral">
+                                <i class="bi bi-capsule-pill"></i>
+                            </div>
+
+                            <h5>Medication tracking</h5>
+
+                            <p>
+                                Review recorded medications, dosage instructions,
+                                and relevant medication history.
+                            </p>
+
+                            <a href="pages/login.html"
+                               class="service-link">
+                                Explore medications
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <article class="service-card h-100">
+                            <div class="service-icon service-icon-purple">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+
+                            <h5>Care coordination</h5>
+
+                            <p>
+                                Keep appointments, doctor information,
+                                and consultation details accessible.
+                            </p>
+
+                            <a href="pages/login.html"
+                               class="service-link">
+                                Explore care
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HOW IT WORKS ==================== -->
+        <section class="section-padding how-section" id="how-it-works">
+            <div class="container">
+
+                <div class="section-heading text-center mx-auto">
+                    <span class="eyebrow">HOW IT WORKS</span>
+
+                    <h2 class="section-title mt-3">
+                        A simpler way to stay organised
+                    </h2>
+
+                    <p class="section-description mt-3">
+                        MedIntelliX is designed to help patients and authorised
+                        healthcare organisations work with health information
+                        more systematically.
+                    </p>
+                </div>
+
+                <div class="row g-4 mt-4">
+
+                    <div class="col-md-4">
+                        <div class="step-card">
+                            <div class="step-number">01</div>
+
+                            <div class="step-icon">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+
+                            <h5>Create your account</h5>
+
+                            <p>
+                                Register through the appropriate portal
+                                and access features assigned to your role.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="step-card">
+                            <div class="step-number">02</div>
+
+                            <div class="step-icon">
+                                <i class="bi bi-folder-check"></i>
+                            </div>
+
+                            <h5>Organise health information</h5>
+
+                            <p>
+                                Access available records, reports,
+                                medications, and consultation history.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="step-card">
+                            <div class="step-number">03</div>
+
+                            <div class="step-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <h5>Stay informed</h5>
+
+                            <p>
+                                Use organised information to support
+                                conversations with your healthcare providers.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== ABOUT ==================== -->
+        <section class="section-padding" id="about">
+            <div class="container">
+
+                <div class="about-panel">
+                    <div class="row align-items-center g-5">
+
+                        <div class="col-lg-6">
+                            <span class="eyebrow">ABOUT MEDINTELLIX</span>
+
+                            <h2 class="section-title mt-3">
+                                Technology with people at its centre
+                            </h2>
+
+                            <p class="section-description mt-3">
+                                Healthcare information can become scattered
+                                across reports, prescriptions, appointments,
+                                and institutions. MedIntelliX aims to make
+                                that information easier to organise and access
+                                through a unified digital experience.
+                            </p>
+
+                            <p class="section-description">
+                                Our vision is to support better-informed
+                                patients, more organised healthcare workflows,
+                                and responsible public-health insights.
+                            </p>
+
+                            <a href="pages/register.html"
+                               class="btn btn-primary-custom mt-3">
+                                Join MedIntelliX
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="about-features">
+
+                                <div class="about-feature">
+                                    <span class="about-feature-icon">
+                                        <i class="bi bi-person-heart"></i>
+                                    </span>
+
+                                    <div>
+                                        <h6>Patient-centred</h6>
+                                        <p>
+                                            Designed around clearer access
+                                            to personal health information.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="about-feature">
+                                    <span class="about-feature-icon">
+                                        <i class="bi bi-shield-lock"></i>
+                                    </span>
+
+                                    <div>
+                                        <h6>Privacy-conscious</h6>
+                                        <p>
+                                            Built with the goal of appropriate
+                                            access, confidentiality, and control.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="about-feature">
+                                    <span class="about-feature-icon">
+                                        <i class="bi bi-diagram-3"></i>
+                                    </span>
+
+                                    <div>
+                                        <h6>Connected ecosystem</h6>
+                                        <p>
+                                            Separate experiences for patients,
+                                            hospitals, and authorised public-health users.
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==================== GET STARTED ==================== -->
+        <section class="section-padding pt-0" id="get-started">
+            <div class="container">
+
+                <div class="get-started-card text-center">
+                    <span class="eyebrow">YOUR HEALTH JOURNEY STARTS HERE</span>
+
+                    <h2 class="section-title mt-3">
+                        Bring your healthcare information together
+                    </h2>
+
+                    <p class="section-description mx-auto mt-3">
+                        Start exploring a more organised approach to your
+                        health information with MedIntelliX.
+                    </p>
+
+                    <div class="d-flex flex-wrap justify-content-center
+                                gap-3 mt-4">
+                        <a href="pages/register.html"
+                           class="btn btn-primary-custom btn-lg">
+                            Create an account
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+
+                        <a href="pages/login.html"
+                           class="btn btn-outline-primary-custom btn-lg">
+                            Sign in
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==================== CONTACT ==================== -->
+        <section class="section-padding contact-section" id="contact">
+            <div class="container">
+
+                <div class="row g-5 align-items-start">
+
+                    <div class="col-lg-5">
+                        <span class="eyebrow">GET IN TOUCH</span>
+
+                        <h2 class="section-title mt-3">
+                            We'd like to hear from you
+                        </h2>
+
+                        <p class="section-description mt-3">
+                            Have a question, suggestion, or idea for
+                            improving MedIntelliX? Send us a message.
+                        </p>
+
+                        <div class="contact-detail mt-4">
+                            <span class="contact-detail-icon">
+                                <i class="bi bi-chat-dots"></i>
+                            </span>
+
+                            <div>
+                                <h6>Questions and feedback</h6>
+                                <p>
+                                    Use the form to share your feedback
+                                    about the platform.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="contact-detail mt-3">
+                            <span class="contact-detail-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </span>
+
+                            <div>
+                                <h6>Protect your privacy</h6>
+                                <p>
+                                    Do not submit medical records,
+                                    passwords, or other sensitive health data
+                                    through this demonstration form.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <div class="contact-card">
+
+                            <form id="contactForm">
+
+                                <div class="mb-3">
+                                    <label for="contactName"
+                                           class="form-label">
+                                        Your name
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="contactName"
+                                           name="name"
+                                           autocomplete="name"
+                                           maxlength="100"
+                                           required
+                                           placeholder="Enter your name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contactEmail"
+                                           class="form-label">
+                                        Email address
+                                    </label>
+
+                                    <input type="email"
+                                           class="form-control"
+                                           id="contactEmail"
+                                           name="email"
+                                           autocomplete="email"
+                                           maxlength="254"
+                                           required
+                                           placeholder="you@example.com">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contactSubject"
+                                           class="form-label">
+                                        Subject
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="contactSubject"
+                                           name="subject"
+                                           maxlength="150"
+                                           required
+                                           placeholder="How can we help?">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contactMessage"
+                                           class="form-label">
+                                        Your message
+                                    </label>
+
+                                    <textarea class="form-control"
+                                              id="contactMessage"
+                                              name="message"
+                                              rows="4"
+                                              maxlength="2000"
+                                              required
+                                              placeholder="Write your message here..."></textarea>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-primary-custom w-100">
+                                    Send message
+                                    <i class="bi bi-send ms-2"></i>
+                                </button>
+
+                                <p class="form-note mt-3 mb-0">
+                                    Demonstration only. Messages are not
+                                    sent or stored at this stage.
+                                </p>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="site-footer">
+        <div class="container">
+
+            <div class="row g-4">
+
+                <div class="col-lg-5">
+                    <a class="navbar-brand brand footer-brand"
+                       href="index.html">
+                        <span class="brand-icon">
+                            <i class="bi bi-heart-pulse-fill"></i>
+                        </span>
+                        <span>MedIntelliX</span>
+                    </a>
+
+                    <p class="footer-description mt-3">
+                        Bringing health information together for a more
+                        organised and connected healthcare experience.
+                    </p>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6>Explore</h6>
+
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#how-it-works">How it works</a></li>
+                        <li><a href="#about">About us</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6>Account</h6>
+
+                    <ul class="footer-links">
+                        <li><a href="pages/login.html">Sign in</a></li>
+                        <li><a href="pages/register.html">Register</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3">
+                    <h6>Our principle</h6>
+
+                    <p class="footer-description">
+                        Healthcare information should be handled responsibly,
+                        with appropriate access controls and respect for privacy.
+                    </p>
+                </div>
+
+            </div>
+
+            <hr class="footer-divider">
+
+            <div class="footer-bottom d-flex flex-column
+                        flex-md-row justify-content-between gap-2">
+                <p class="mb-0">
+                    &copy; <span id="current-year"></span> MedIntelliX.
+                    All rights reserved.
+                </p>
+
+                <p class="mb-0">
+                    A healthcare technology project.
+                </p>
+            </div>
+
+            <p class="medical-disclaimer mt-3 mb-0">
+                Disclaimer: MedIntelliX is a healthcare information platform
+                concept, not a substitute for professional medical advice,
+                diagnosis, or treatment.
+            </p>
+
+        </div>
+    </footer>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View your healthcare journey in chronological order on MedIntelliX.">
+    <title>Health Timeline | MedIntelliX</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/patient.css">
+
+    <style>
+        .timeline-page {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .timeline-heading {
+            margin-bottom: 28px;
+        }
+
+        .timeline-heading h1 {
+            color: #20313f;
+            font-size: clamp(1.7rem, 3vw, 2.25rem);
+            font-weight: 750;
+            margin-bottom: 8px;
+        }
+
+        .timeline-heading p {
+            color: #637381;
+            margin-bottom: 0;
+            line-height: 1.7;
+        }
+
+        .timeline-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .timeline-summary-card {
+            background: #fff;
+            border: 1px solid #e3eaf0;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .timeline-summary-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .timeline-summary-icon.teal {
+            background: #e5f4f3;
+            color: #187c80;
+        }
+
+        .timeline-summary-icon.blue {
+            background: #eaf2fa;
+            color: #3978bd;
+        }
+
+        .timeline-summary-icon.coral {
+            background: #fff0ec;
+            color: #d77b65;
+        }
+
+        .timeline-summary-card .summary-label {
+            font-size: 12px;
+            color: #637381;
+            margin-bottom: 4px;
+        }
+
+        .timeline-summary-card .summary-number {
+            font-size: 24px;
+            font-weight: 750;
+            color: #20313f;
+            line-height: 1.2;
+        }
+
+        .timeline-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .timeline-search {
+            position: relative;
+            flex: 1 1 260px;
+        }
+
+        .timeline-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #84919d;
+        }
+
+        .timeline-search input {
+            width: 100%;
+            min-height: 46px;
+            border: 1px solid #e3eaf0;
+            border-radius: 11px;
+            padding: 10px 14px 10px 42px;
+            color: #20313f;
+            background: #fff;
+        }
+
+        .timeline-toolbar select {
+            min-height: 46px;
+            min-width: 185px;
+            border: 1px solid #e3eaf0;
+            border-radius: 11px;
+            padding: 10px 36px 10px 13px;
+            color: #20313f;
+            background-color: #fff;
+        }
+
+        .timeline-panel {
+            background: #fff;
+            border: 1px solid #e3eaf0;
+            border-radius: 18px;
+            padding: 26px;
+        }
+
+        .timeline-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .timeline-panel-header h2 {
+            font-size: 18px;
+            font-weight: 750;
+            color: #20313f;
+            margin: 0;
+        }
+
+        .timeline-panel-header p {
+            color: #84919d;
+            font-size: 13px;
+            margin: 5px 0 0;
+        }
+
+        .timeline-list {
+            position: relative;
+            padding-left: 39px;
+        }
+
+        .timeline-list::before {
+            content: "";
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            bottom: 22px;
+            width: 2px;
+            background: #e3eaf0;
+        }
+
+        .timeline-event {
+            position: relative;
+            padding-bottom: 27px;
+        }
+
+        .timeline-event:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -39px;
+            top: 2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            z-index: 1;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 1px #e3eaf0;
+        }
+
+        .timeline-marker.consultation {
+            background: #e5f4f3;
+            color: #187c80;
+        }
+
+        .timeline-marker.report {
+            background: #eaf2fa;
+            color: #3978bd;
+        }
+
+        .timeline-marker.diagnosis {
+            background: #fff0ec;
+            color: #d77b65;
+        }
+
+        .timeline-marker.follow-up {
+            background: #eee8ff;
+            color: #8063b5;
+        }
+
+        .timeline-event-card {
+            border: 1px solid #e8edf2;
+            border-radius: 13px;
+            padding: 18px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .timeline-event-card:hover {
+            border-color: #b7dedd;
+            box-shadow: 0 5px 18px rgba(32, 49, 63, .05);
+        }
+
+        .timeline-event-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .timeline-event-title {
+            color: #20313f;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .timeline-event-date {
+            color: #637381;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-event-description {
+            color: #637381;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .timeline-type {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .timeline-type.consultation {
+            background: #e5f4f3;
+            color: #12666a;
+        }
+
+        .timeline-type.report {
+            background: #eaf2fa;
+            color: #315f91;
+        }
+
+        .timeline-type.diagnosis {
+            background: #fff0ec;
+            color: #a95743;
+        }
+
+        .timeline-type.follow-up {
+            background: #eee8ff;
+            color: #654c98;
+        }
+
+        .timeline-event-footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #edf1f5;
+            padding-top: 12px;
+        }
+
+        .timeline-source {
+            color: #84919d;
+            font-size: 12px;
+        }
+
+        .timeline-details-button {
+            background: transparent;
+            border: 0;
+            padding: 5px 0 5px 8px;
+            color: #187c80;
+            font-weight: 650;
+            font-size: 12px;
+        }
+
+        .timeline-details-button:hover {
+            color: #12666a;
+            text-decoration: underline;
+        }
+
+        .timeline-empty {
+            text-align: center;
+            padding: 45px 15px;
+            color: #637381;
+        }
+
+        .timeline-empty i {
+            display: block;
+            font-size: 36px;
+            color: #84919d;
+            margin-bottom: 12px;
+        }
+
+        .timeline-empty h3 {
+            color: #20313f;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .timeline-disclaimer {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #f1f7fb;
+            border: 1px solid #e1edf5;
+            border-radius: 12px;
+            padding: 15px;
+            color: #637381;
+            font-size: 12px;
+            line-height: 1.7;
+            margin-top: 22px;
+        }
+
+        .timeline-disclaimer i {
+            color: #3978bd;
+            font-size: 17px;
+        }
+
+        @media (max-width: 700px) {
+            .timeline-summary {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .timeline-summary-card {
+                padding: 15px;
+            }
+
+            .timeline-panel {
+                padding: 17px;
+            }
+
+            .timeline-event-top {
+                flex-direction: column;
+            }
+
+            .timeline-toolbar select {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .timeline-event-card {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="portal-layout">
+
+        <!-- Sidebar -->
+        <aside class="portal-sidebar" id="patientSidebar" aria-label="Patient navigation">
+            <a href="../../index.html" class="portal-brand text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span>MedIntelliX</span>
+            </a>
+
+            <div class="sidebar-section-label">PATIENT PORTAL</div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="sidebar-link">
+                    <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+                </a>
+                <a href="health-records.html" class="sidebar-link">
+                    <i class="bi bi-folder2-open"></i><span>Health records</span>
+                </a>
+                <a href="medical-reports.html" class="sidebar-link">
+                    <i class="bi bi-file-earmark-medical"></i><span>Medical reports</span>
+                </a>
+                <a href="medications.html" class="sidebar-link">
+                    <i class="bi bi-capsule"></i><span>Medications</span>
+                </a>
+                <a href="appointments.html" class="sidebar-link">
+                    <i class="bi bi-calendar2-check"></i><span>Appointments</span>
+                </a>
+                <a href="doctors.html" class="sidebar-link">
+                    <i class="bi bi-person-badge"></i><span>Doctors</span>
+                </a>
+                <a href="health-timeline.html" class="sidebar-link active" aria-current="page">
+                    <i class="bi bi-clock-history"></i><span>Health timeline</span>
+                </a>
+                <a href="profile.html" class="sidebar-link">
+                    <i class="bi bi-person-circle"></i><span>My profile</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-help">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Your health, your journey</strong>
+                        <p>Explore your health information in one place.</p>
+                    </div>
+                </div>
+                <a href="../login.html" class="sidebar-link" id="logoutLink">
+                    <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Mobile sidebar overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
+
+        <!-- Main content -->
+        <main class="portal-main">
+            <header class="portal-topbar">
+                <button class="sidebar-toggle" id="sidebarToggle"
+                        type="button" aria-label="Open navigation"
+                        aria-controls="patientSidebar" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="topbar-page-title">
+                    <span>Patient Portal</span>
+                    <strong>Health timeline</strong>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="topbar-icon-button" id="notificationButton"
+                            type="button" aria-label="Notifications">
+                        <i class="bi bi-bell"></i>
+                    </button>
+                    <a href="profile.html" class="topbar-profile text-decoration-none">
+                        <span class="topbar-avatar" id="profileInitials">AM</span>
+                        <span class="topbar-profile-text">
+                            <strong id="patientName">Alex Morgan</strong>
+                            <small>Patient</small>
+                        </span>
+                    </a>
+                </div>
+            </header>
+
+            <div class="portal-content">
+                <div class="timeline-page">
+
+                    <section class="timeline-heading">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge rounded-pill text-bg-light border">
+                                <i class="bi bi-clock-history me-1"></i>
+                                YOUR HEALTH JOURNEY
+                            </span>
+                        </div>
+                        <h1>Health timeline</h1>
+                        <p>
+                            Explore your medical journey, from consultations and reports
+                            to follow-ups, all organised by date.
+                        </p>
+                    </section>
+
+                    <!-- Summary cards -->
+                    <section class="timeline-summary" aria-label="Timeline summary">
+                        <article class="timeline-summary-card">
+                            <div class="timeline-summary-icon teal">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <div class="summary-label">Total events</div>
+                                <div class="summary-number" id="totalEvents">6</div>
+                            </div>
+                        </article>
+
+                        <article class="timeline-summary-card">
+                            <div class="timeline-summary-icon blue">
+                                <i class="bi bi-file-earmark-medical"></i>
+                            </div>
+                            <div>
+                                <div class="summary-label">Medical reports</div>
+                                <div class="summary-number" id="reportEvents">2</div>
+                            </div>
+                        </article>
+
+                        <article class="timeline-summary-card">
+                            <div class="timeline-summary-icon coral">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="summary-label">Consultations</div>
+                                <div class="summary-number" id="consultationEvents">2</div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <!-- Search and filter -->
+                    <section class="timeline-toolbar" aria-label="Search timeline">
+                        <div class="timeline-search">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input type="search" id="timelineSearch"
+                                   placeholder="Search your health timeline..."
+                                   aria-label="Search timeline events">
+                        </div>
+
+                        <select id="timelineTypeFilter" aria-label="Filter by event type">
+                            <option value="all">All event types</option>
+                            <option value="consultation">Consultations</option>
+                            <option value="report">Medical reports</option>
+                            <option value="diagnosis">Diagnoses</option>
+                            <option value="follow-up">Follow-ups</option>
+                        </select>
+
+                        <select id="timelineSort" aria-label="Sort timeline">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                        </select>
+                    </section>
+
+                    <!-- Timeline -->
+                    <section class="timeline-panel">
+                        <div class="timeline-panel-header">
+                            <div>
+                                <h2>Your medical history</h2>
+                                <p id="timelineResultLabel">Showing 6 sample events</p>
+                            </div>
+                            <i class="bi bi-journal-medical fs-4" style="color:#187c80"
+                               aria-hidden="true"></i>
+                        </div>
+
+                        <div class="timeline-list" id="timelineList" aria-live="polite">
+                            <!-- Events are inserted by health-timeline.js -->
+                        </div>
+
+                        <div class="timeline-empty" id="timelineEmpty" hidden>
+                            <i class="bi bi-search"></i>
+                            <h3>No matching events found</h3>
+                            <p>Try another search term or change the event-type filter.</p>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    id="clearTimelineFilters">
+                                Clear filters
+                            </button>
+                        </div>
+                    </section>
+
+                    <div class="timeline-disclaimer">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <div>
+                            <strong>Demonstration data:</strong> All events on this page are
+                            fictional examples used to demonstrate the interface. They are
+                            not real patient records and should not be used for medical decisions.
+                        </div>
+                    </div>
+
+                    <footer class="portal-footer">
+                        <span>© <span id="timelineYear"></span> MedIntelliX</span>
+                        <span>Organising your healthcare journey</span>
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Event details modal -->
+    <div class="modal fade" id="timelineDetailsModal" tabindex="-1"
+         aria-labelledby="timelineModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius:16px">
+                <div class="modal-header">
+                    <div>
+                        <span class="badge rounded-pill text-bg-light border mb-2"
+                              id="timelineModalType">Event</span>
+                        <h2 class="modal-title fs-5 fw-bold" id="timelineModalTitle">
+                            Event details
+                        </h2>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary small mb-1" id="timelineModalDate"></p>
+                    <p class="mb-3" id="timelineModalDescription"></p>
+                    <div class="rounded-3 p-3" style="background:#f7f9fc">
+                        <div class="small text-secondary mb-1">Recorded by / source</div>
+                        <div class="fw-semibold" id="timelineModalSource"></div>
+                    </div>
+                    <div class="small text-secondary mt-3" id="timelineModalNote"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/patient/health-timeline.js"></script>
+</body>
+</html>

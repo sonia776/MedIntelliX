@@ -1,0 +1,523 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultations | MedIntelliX Hospital Portal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/hospital.css">
+
+    <style>
+        .consultation-stats .card,
+        .consultation-panel {
+            border: 1px solid #e3eaf0;
+            border-radius: 15px;
+            background: #fff;
+        }
+
+        .consultation-panel {
+            overflow: hidden;
+        }
+
+        .consultation-panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #e3eaf0;
+        }
+
+        .consultation-panel-header h2 {
+            font-size: 16px;
+            font-weight: 750;
+            margin-bottom: 5px;
+        }
+
+        .consultation-panel-header p {
+            color: #637381;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .consultation-toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .consultation-search {
+            position: relative;
+            flex: 1 1 240px;
+        }
+
+        .consultation-search i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #84919d;
+        }
+
+        .consultation-search input {
+            width: 100%;
+            padding: 11px 12px 11px 38px;
+            border: 1px solid #e3eaf0;
+            border-radius: 10px;
+        }
+
+        .consultation-toolbar select,
+        .consultation-toolbar input[type="date"] {
+            min-height: 43px;
+            padding: 9px 12px;
+            border: 1px solid #e3eaf0;
+            border-radius: 10px;
+            background: #fff;
+            color: #20313f;
+            font-size: 13px;
+        }
+
+        .consultation-search input:focus,
+        .consultation-toolbar select:focus,
+        .consultation-toolbar input:focus {
+            outline: none;
+            border-color: #187c80;
+            box-shadow: 0 0 0 3px rgba(24,124,128,.1);
+        }
+
+        .consultation-table {
+            min-width: 800px;
+            margin-bottom: 0;
+            vertical-align: middle;
+        }
+
+        .consultation-table th {
+            background: #f7f9fc;
+            color: #637381;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            font-size: 11px;
+            padding: 15px 17px;
+            white-space: nowrap;
+        }
+
+        .consultation-table td {
+            padding: 16px 17px;
+            font-size: 13px;
+            border-color: #edf1f5;
+            color: #425466;
+        }
+
+        .consultation-patient {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 170px;
+        }
+
+        .consultation-avatar {
+            width: 39px;
+            height: 39px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #e5f4f3;
+            color: #12666a;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .consultation-patient strong {
+            display: block;
+            color: #20313f;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .consultation-patient small {
+            color: #84919d;
+            font-size: 11px;
+        }
+
+        .consultation-status {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .consultation-status.scheduled {
+            background: #eaf2fa;
+            color: #285d91;
+        }
+
+        .consultation-status.in-progress {
+            background: #fff4d8;
+            color: #946200;
+        }
+
+        .consultation-status.completed {
+            background: #e8f7ef;
+            color: #18734b;
+        }
+
+        .consultation-status.cancelled {
+            background: #fff0ec;
+            color: #b74b40;
+        }
+
+        .consultation-status.no-show {
+            background: #edf1f5;
+            color: #637381;
+        }
+
+        .consultation-action {
+            border: 1px solid #e3eaf0;
+            border-radius: 9px;
+            background: #fff;
+            padding: 7px 10px;
+            color: #425466;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .consultation-action:hover {
+            background: #e5f4f3;
+            color: #12666a;
+        }
+
+        .consultation-empty {
+            text-align: center;
+            padding: 42px 20px;
+            color: #637381;
+        }
+
+        .consultation-empty i {
+            font-size: 32px;
+            display: block;
+            color: #a3b2bf;
+            margin-bottom: 10px;
+        }
+
+        .consultation-detail-label {
+            color: #84919d;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .consultation-detail-value {
+            color: #20313f;
+            font-size: 14px;
+            font-weight: 650;
+            overflow-wrap: anywhere;
+        }
+
+        .consultation-detail-card {
+            border: 1px solid #e3eaf0;
+            border-radius: 12px;
+            padding: 15px;
+            height: 100%;
+        }
+
+        @media (max-width: 575px) {
+            .consultation-toolbar > * {
+                width: 100%;
+            }
+
+            .consultation-panel-header {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="portal-layout">
+
+    <aside class="portal-sidebar" id="patientSidebar">
+        <div class="sidebar-brand">
+            <a href="../../index.html" class="brand-link text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span class="brand-text">MedIntelliX<small>Hospital Portal</small></span>
+            </a>
+        </div>
+
+        <div class="sidebar-section-label">WORKSPACE</div>
+
+        <nav class="sidebar-nav" aria-label="Hospital navigation">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="patients.html" class="sidebar-link">
+                <i class="bi bi-people"></i><span>Patients</span>
+            </a>
+            <a href="register-patient.html" class="sidebar-link">
+                <i class="bi bi-person-plus"></i><span>Register Patient</span>
+            </a>
+            <a href="consultations.html" class="sidebar-link active" aria-current="page">
+                <i class="bi bi-calendar2-check"></i><span>Consultations</span>
+            </a>
+            <a href="medical-reports.html" class="sidebar-link">
+                <i class="bi bi-file-earmark-medical"></i><span>Medical Reports</span>
+            </a>
+            <a href="staff.html" class="sidebar-link">
+                <i class="bi bi-person-badge"></i><span>Staff & Permissions</span>
+            </a>
+            <a href="hospital-profile.html" class="sidebar-link">
+                <i class="bi bi-hospital"></i><span>Hospital Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help-card">
+                <i class="bi bi-shield-check"></i>
+                <strong>Secure care coordination</strong>
+                <p>Keep patient information confidential.</p>
+            </div>
+            <a href="#" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                        aria-label="Open navigation" aria-controls="patientSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <div class="topbar-page-label">Hospital workspace</div>
+                    <h1 class="topbar-title">Consultations</h1>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <button type="button" class="topbar-icon-btn" id="notificationButton"
+                        aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <div class="topbar-user">
+                    <div class="topbar-avatar">EH</div>
+                    <div class="topbar-user-info">
+                        <strong id="hospitalNameShort">Example Hospital</strong>
+                        <span>Hospital staff</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="mb-4">
+                <div class="text-secondary small mb-2">
+                    <a href="dashboard.html" class="text-decoration-none">Dashboard</a>
+                    <i class="bi bi-chevron-right mx-1"></i> Consultations
+                </div>
+                <h2 class="h4 fw-bold mb-2">Consultation management</h2>
+                <p class="text-secondary mb-0">
+                    Review appointments, track consultation progress and view session details.
+                </p>
+            </div>
+
+            <div class="portal-notice mb-4" role="note">
+                <i class="bi bi-info-circle me-2"></i>
+                Demo mode: all consultation entries are fictional. Changes affect only this page
+                and are not saved to a server.
+            </div>
+
+            <!-- Summary cards -->
+            <div class="row g-3 consultation-stats mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">All consultations</span>
+                                <i class="bi bi-calendar2-week fs-4" style="color:#187c80;"></i>
+                            </div>
+                            <div class="fs-3 fw-bold" id="totalConsultations">8</div>
+                            <div class="small text-secondary mt-1">Demo schedule</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">Scheduled</span>
+                                <i class="bi bi-clock fs-4" style="color:#356eab;"></i>
+                            </div>
+                            <div class="fs-3 fw-bold" id="scheduledConsultations">3</div>
+                            <div class="small text-secondary mt-1">Awaiting consultation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">In progress</span>
+                                <i class="bi bi-activity fs-4" style="color:#b98213;"></i>
+                            </div>
+                            <div class="fs-3 fw-bold" id="inProgressConsultations">1</div>
+                            <div class="small text-secondary mt-1">Currently being attended</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">Completed</span>
+                                <i class="bi bi-check-circle fs-4" style="color:#218354;"></i>
+                            </div>
+                            <div class="fs-3 fw-bold" id="completedConsultations">2</div>
+                            <div class="small text-secondary mt-1">Marked complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="consultation-toolbar">
+                <div class="consultation-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="consultationSearch"
+                           placeholder="Search patient, doctor or ID..."
+                           aria-label="Search consultations">
+                </div>
+
+                <select id="statusFilter" aria-label="Filter by consultation status">
+                    <option value="all">All statuses</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="in-progress">In progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="no-show">No-show</option>
+                </select>
+
+                <input type="date" id="dateFilter" aria-label="Filter by consultation date">
+
+                <button type="button" class="btn btn-outline-secondary"
+                        id="resetFilters" style="border-radius:10px;">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                </button>
+            </div>
+
+            <!-- Table -->
+            <section class="consultation-panel">
+                <div class="consultation-panel-header d-flex justify-content-between
+                            align-items-center gap-3 flex-wrap">
+                    <div>
+                        <h2>Consultation schedule</h2>
+                        <p id="resultsCount" aria-live="polite">Showing 8 demo consultations</p>
+                    </div>
+                    <span class="small text-secondary">
+                        <i class="bi bi-shield-lock me-1"></i>Demo records
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table consultation-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Patient</th>
+                                <th scope="col">Doctor</th>
+                                <th scope="col">Date & time</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultationTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-secondary">
+                                    Loading consultations...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="consultation-empty d-none" id="emptyConsultations">
+                    <i class="bi bi-calendar-x"></i>
+                    <h3 class="h6 fw-bold text-dark">No consultations found</h3>
+                    <p class="small mb-3">Try another search or reset the filters.</p>
+                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                            id="emptyReset">Clear filters</button>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-3">
+                <i class="bi bi-info-circle me-1"></i>
+                Consultation statuses are editable only in this temporary browser session.
+            </p>
+
+            <footer class="py-4 text-secondary small">
+                © <span id="hospitalYear"></span> MedIntelliX · Hospital Portal
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- Consultation details modal -->
+<div class="modal fade" id="consultationDetailsModal" tabindex="-1"
+     aria-labelledby="consultationDetailsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius:18px;">
+            <div class="modal-header p-4">
+                <div>
+                    <div class="small text-secondary mb-1">DEMO CONSULTATION</div>
+                    <h2 class="modal-title fs-5 fw-bold" id="consultationDetailsTitle">
+                        Consultation details
+                    </h2>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4" id="consultationDetailsBody"></div>
+
+            <div class="modal-footer justify-content-between">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <label for="newConsultationStatus" class="small text-secondary">
+                        Update demo status
+                    </label>
+                    <select id="newConsultationStatus" class="form-select form-select-sm"
+                            style="width:auto;">
+                        <option value="scheduled">Scheduled</option>
+                        <option value="in-progress">In progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="no-show">No-show</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveConsultationStatus"
+                            style="background:#187c80;border-color:#187c80;">
+                        Update demo status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/hospital/consultations.js"></script>
+</body>
+</html>

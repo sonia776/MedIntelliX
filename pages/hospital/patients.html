@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients | MedIntelliX Hospital Portal</title>
+    <meta name="description" content="View and manage enrolled patients in the MedIntelliX hospital demo portal.">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/hospital.css">
+
+    <style>
+        .patients-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .patients-search {
+            position: relative;
+            flex: 1 1 260px;
+            max-width: 440px;
+        }
+
+        .patients-search i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #84919d;
+        }
+
+        .patients-search input {
+            padding: 11px 14px 11px 40px;
+            border: 1px solid #e3eaf0;
+            border-radius: 10px;
+            width: 100%;
+            background: #fff;
+        }
+
+        .patients-search input:focus,
+        .patients-filter:focus {
+            outline: none;
+            border-color: #187c80;
+            box-shadow: 0 0 0 3px rgba(24, 124, 128, 0.12);
+        }
+
+        .patients-filter {
+            min-width: 160px;
+            padding: 11px 12px;
+            border: 1px solid #e3eaf0;
+            border-radius: 10px;
+            background: #fff;
+            color: #20313f;
+        }
+
+        .patient-table-card {
+            background: #fff;
+            border: 1px solid #e3eaf0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .patient-table-heading {
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e3eaf0;
+        }
+
+        .patient-table-heading h2 {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+
+        .patient-table-heading p {
+            color: #637381;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .patient-table {
+            margin-bottom: 0;
+            vertical-align: middle;
+            min-width: 760px;
+        }
+
+        .patient-table thead th {
+            background: #f7f9fc;
+            color: #637381;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 15px 18px;
+            border-bottom: 1px solid #e3eaf0;
+            white-space: nowrap;
+        }
+
+        .patient-table tbody td {
+            padding: 17px 18px;
+            border-color: #edf1f5;
+            font-size: 13px;
+            color: #425466;
+        }
+
+        .patient-identity {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 190px;
+        }
+
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e5f4f3;
+            color: #12666a;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .patient-name {
+            color: #20313f;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .patient-id {
+            color: #84919d;
+            font-size: 11px;
+        }
+
+        .patient-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 9px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .patient-status.active {
+            color: #18734b;
+            background: #e8f7ef;
+        }
+
+        .patient-status.pending {
+            color: #946200;
+            background: #fff4d8;
+        }
+
+        .patient-status.inactive {
+            color: #637381;
+            background: #edf1f5;
+        }
+
+        .patient-action-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid #e3eaf0;
+            border-radius: 9px;
+            background: #fff;
+            color: #425466;
+        }
+
+        .patient-action-btn:hover {
+            color: #12666a;
+            background: #e5f4f3;
+        }
+
+        .patients-empty {
+            padding: 48px 20px;
+            text-align: center;
+            color: #637381;
+        }
+
+        .patients-empty i {
+            font-size: 32px;
+            color: #a3b2bf;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .patient-detail-label {
+            color: #84919d;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .patient-detail-value {
+            color: #20313f;
+            font-size: 14px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .detail-section {
+            border: 1px solid #e3eaf0;
+            border-radius: 12px;
+            padding: 15px;
+            height: 100%;
+        }
+
+        .detail-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 575px) {
+            .patients-toolbar > * {
+                width: 100%;
+                max-width: none;
+            }
+
+            .patients-filter {
+                width: 100%;
+            }
+
+            .patient-table-heading {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="portal-layout">
+
+    <!-- Sidebar -->
+    <aside class="portal-sidebar" id="patientSidebar">
+        <div class="sidebar-brand">
+            <a href="../../index.html" class="brand-link text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span class="brand-text">MedIntelliX<small>Hospital Portal</small></span>
+            </a>
+        </div>
+
+        <div class="sidebar-section-label">WORKSPACE</div>
+
+        <nav class="sidebar-nav" aria-label="Hospital navigation">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="patients.html" class="sidebar-link active" aria-current="page">
+                <i class="bi bi-people"></i><span>Patients</span>
+            </a>
+            <a href="register-patient.html" class="sidebar-link">
+                <i class="bi bi-person-plus"></i><span>Register Patient</span>
+            </a>
+            <a href="consultations.html" class="sidebar-link">
+                <i class="bi bi-calendar2-check"></i><span>Consultations</span>
+            </a>
+            <a href="medical-reports.html" class="sidebar-link">
+                <i class="bi bi-file-earmark-medical"></i><span>Medical Reports</span>
+            </a>
+            <a href="staff.html" class="sidebar-link">
+                <i class="bi bi-person-badge"></i><span>Staff & Permissions</span>
+            </a>
+            <a href="hospital-profile.html" class="sidebar-link">
+                <i class="bi bi-hospital"></i><span>Hospital Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help-card">
+                <i class="bi bi-shield-check"></i>
+                <strong>Protect patient privacy</strong>
+                <p>Access records only when authorised.</p>
+            </div>
+            <a href="#" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main content -->
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                        aria-label="Open navigation" aria-controls="patientSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <div class="topbar-page-label">Hospital workspace</div>
+                    <h1 class="topbar-title">Patients</h1>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <button type="button" class="topbar-icon-btn" id="notificationButton"
+                        aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <div class="topbar-user">
+                    <div class="topbar-avatar">EH</div>
+                    <div class="topbar-user-info">
+                        <strong id="hospitalNameShort">Example Hospital</strong>
+                        <span>Hospital staff</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                <div>
+                    <div class="text-secondary small mb-2">
+                        <a href="dashboard.html" class="text-decoration-none">Dashboard</a>
+                        <i class="bi bi-chevron-right mx-1"></i> Patients
+                    </div>
+                    <h2 class="h4 fw-bold mb-2">Patient directory</h2>
+                    <p class="text-secondary mb-0">
+                        Find enrolled patients and view their basic profile information.
+                    </p>
+                </div>
+                <a href="register-patient.html" class="btn btn-primary px-3 py-2"
+                   style="background:#187c80;border-color:#187c80;border-radius:10px;">
+                    <i class="bi bi-person-plus me-2"></i>Register patient
+                </a>
+            </div>
+
+            <div class="portal-notice mb-4" role="note">
+                <i class="bi bi-info-circle me-2"></i>
+                <span>
+                    Demonstration only: all patient entries below are fictional.
+                    This page is not connected to a medical database.
+                </span>
+            </div>
+
+            <!-- Summary cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3" style="background:#e5f4f3;color:#187c80;">
+                                <i class="bi bi-people fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">Total demo patients</div>
+                                <div class="fs-3 fw-bold" id="totalPatients">8</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3" style="background:#e8f7ef;color:#18734b;">
+                                <i class="bi bi-check-circle fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">Active enrolments</div>
+                                <div class="fs-3 fw-bold" id="activePatients">5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="border-radius:14px;">
+                        <div class="card-body p-4 d-flex align-items-center gap-3">
+                            <div class="rounded-3 p-3" style="background:#fff4d8;color:#946200;">
+                                <i class="bi bi-hourglass-split fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">Pending enrolments</div>
+                                <div class="fs-3 fw-bold" id="pendingPatients">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and filters -->
+            <div class="patients-toolbar">
+                <div class="patients-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="patientSearch"
+                           placeholder="Search name, patient ID or email..."
+                           aria-label="Search patients">
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <select class="patients-filter" id="statusFilter" aria-label="Filter by enrolment status">
+                        <option value="all">All statuses</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" id="resetFilters" type="button"
+                            style="border-radius:10px;padding:10px 14px;">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Patient table -->
+            <section class="patient-table-card">
+                <div class="patient-table-heading">
+                    <div>
+                        <h2>Enrolled patients</h2>
+                        <p id="resultsCount" aria-live="polite">Showing 8 demo patients</p>
+                    </div>
+                    <span class="small text-secondary">
+                        <i class="bi bi-shield-lock me-1"></i>Demo records
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table patient-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Patient</th>
+                                <th scope="col">Age / Gender</th>
+                                <th scope="col">Enrolled on</th>
+                                <th scope="col">Last visit</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-secondary py-4">
+                                    Loading demo patients...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="patients-empty d-none" id="emptyPatients">
+                    <i class="bi bi-person-x"></i>
+                    <h3 class="h6 fw-bold text-dark">No patients found</h3>
+                    <p class="small mb-3">Try a different search term or reset your filters.</p>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="emptyReset">
+                        Clear filters
+                    </button>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-3 mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Patient information shown here is sample content for interface development.
+            </p>
+
+            <footer class="py-4 text-secondary small">
+                © <span id="hospitalYear"></span> MedIntelliX · Hospital Portal
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- Patient details modal -->
+<div class="modal fade" id="patientDetailsModal" tabindex="-1"
+     aria-labelledby="patientDetailsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius:18px;">
+            <div class="modal-header p-4">
+                <div>
+                    <div class="small text-secondary mb-1">DEMO PATIENT PROFILE</div>
+                    <h2 class="modal-title fs-5 fw-bold" id="patientDetailsTitle">Patient details</h2>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="patientDetailsBody">
+                <!-- Filled by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/hospital/patients.js"></script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+/**
+ * MedIntelliX Database Service
+ * Developed by: Sonia (Backend Architecture & Database Engineering)
+ * Tech Stack: PostgreSQL (Matching PDF Category 1) with High-Speed Persistent Fallback
+ * Compatible with: Supabase (PostgreSQL), Render PostgreSQL, Neon PostgreSQL, Local PostgreSQL
+ */
+
+const fs = require("fs");
+const path = require("path");
+const bcrypt = require("bcryptjs");
+const { Pool } = require("pg");
+
+const DATA_DIR = path.join(__dirname, "../../data");
+const DB_FILE = path.join(DATA_DIR, "db.json");
+
+// Ensure local data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Global PostgreSQL Pool
+let pgPool = null;
+let isPostgresConnected = false;
+
+function getPgPool() {
+    if (pgPool) return pgPool;
+
+    const connectionString = process.env.DATABASE_URL;
+    if (connectionString && (connectionString.startsWith("postgresql://") || connectionString.startsWith("postgres://"))) {
+        const isRemote = !connectionString.includes("localhost") && !connectionString.includes("127.0.0.1");
+        pgPool = new Pool({
+            connectionString,
+            ssl: isRemote ? { rejectUnauthorized: false } : false,
+            connectionTimeoutMillis: 4000
+        });
+
+        // Error listener to prevent unhandled process crashes
+        pgPool.on("error", (err) => {
+            console.warn("[PostgreSQL Pool Notice]:", err.message);
+            isPostgresConnected = false;
+        });
+    }
+    return pgPool;
+}
+
+// Initial seed data for local storage
+function getInitialSeedData() {
+    const salt = bcrypt.genSaltSync(10);
+    const demoPasswordHash = bcrypt.hashSync("Password123!", salt);
+
+    return {
+        users: [
+            {
+                id: "usr_pat_alex_001",
+                full_name: "Alex Morgan",
+                email: "alex@medintellix.com",
+                password_hash: demoPasswordHash,
+                role: "patient",
+                organisation_name: null,
+                institution_id: null,
+                phone: "+1-555-0199",
+                is_verified: true,
+                created_at: new Date().toISOString()
+            },
+            {
+                id: "usr_hosp_city_002",
+                full_name: "Dr. Sarah Jenkins",
+                email: "hospital@medintellix.com",
+                password_hash: demoPasswordHash,
+                role: "hospital",
+                organisation_name: "City Central Medical Center",
+                institution_id: "HOSP-IND-90812",
+                phone: "+1-555-0245",
+                is_verified: true,
+                created_at: new Date().toISOString()
+            },
+            {
+                id: "usr_gov_moh_003",
+                full_name: "Rajesh Kumar",
+                email: "government@medintellix.gov",
+                password_hash: demoPasswordHash,
+                role: "government",
+                organisation_name: "Ministry of Health & Public Welfare",
+                institution_id: "GOV-DEP-44910",
+                phone: "+1-555-0382",
+                is_verified: true,
+                created_at: new Date().toISOString()
+            }
+        ],
+        patient_profiles: [
+            {
+                id: "prof_alex_001",
+                user_id: "usr_pat_alex_001",
+                date_of_birth: "1992-05-14",
+                gender: "Male",
+                blood_group: "O+",
+                emergency_contact_name: "Emma Morgan",
+                emergency_contact_phone: "+1-555-0921",
+                allergies: "Penicillin, Pollen",
+                chronic_conditions: "Mild Asthma"
+            }
+        ],
+        appointments: [
+            {
+                id: "apt_101",
+                patient_id: "usr_pat_alex_001",
+                patient_name: "Alex Morgan",
+                doctor_name: "Dr. Rachel Green",
+                department: "Cardiology",
+                hospital_name: "City Central Hospital",
+                appointment_date: "2026-11-02",
+                appointment_time: "10:30 AM",
+                type: "In-Person",
+                status: "Confirmed",
+                reason: "Regular cardiac review and blood pressure check"
+            },
+            {
+                id: "apt_102",
+                patient_id: "usr_pat_alex_001",
+                patient_name: "Alex Morgan",
+                doctor_name: "Dr. Michael Chen",
+                department: "Pulmonology",
+                hospital_name: "Apex Healthcare Clinic",
+                appointment_date: "2026-11-15",
+                appointment_time: "02:00 PM",
+                type: "Video Consultation",
+                status: "Scheduled",
+                reason: "Asthma management follow-up"
+            }
+        ],
+        medications: [
+            {
+                id: "med_201",
+                patient_id: "usr_pat_alex_001",
+                medication_name: "Atorvastatin",
+                dosage: "20mg",
+                frequency: "Once daily",
+                timing: "At bedtime",
+                prescribed_by: "Dr. Rachel Green",
+                start_date: "2026-09-01",
+                end_date: "2026-12-01",
+                status: "Active",
+                instructions: "Take with water at bedtime"
+            },
+            {
+                id: "med_202",
+                patient_id: "usr_pat_alex_001",
+                medication_name: "Albuterol Inhaler",
+                dosage: "90mcg",
+                frequency: "As needed",
+                timing: "Before exercise or symptoms",
+                prescribed_by: "Dr. Michael Chen",
+                start_date: "2026-08-15",
+                end_date: "2027-08-15",
+                status: "Active",
+                instructions: "2 puffs every 4-6 hours as needed for wheezing"
+            }
+        ],
+        medical_records: [
+            {
+                id: "rec_301",
+                patient_id: "usr_pat_alex_001",
+                title: "Complete Blood Count & Lipid Profile",
+                category: "Lab Report",
+                facility_name: "City Central Pathology",
+                doctor_name: "Dr. Rachel Green",
+                record_date: "2026-10-10",
+                file_url: "#",
+                summary: "Lipid panel shows total cholesterol 182 mg/dL. Normal range.",
+                ai_insights: "AI Verified: Cholesterol levels are well managed under current statin regimen."
+            },
+            {
+                id: "rec_302",
+                patient_id: "usr_pat_alex_001",
+                title: "Chest X-Ray (PA View)",
+                category: "Imaging",
+                facility_name: "City Diagnostic Imaging",
+                doctor_name: "Dr. Sarah Jenkins",
+                record_date: "2026-08-14",
+                file_url: "#",
+                summary: "Clear lung fields, no active infiltrates or effusion.",
+                ai_insights: "Normal chest radiograph, no signs of acute pulmonary infection."
+            }
+        ],
+        audit_logs: []
+    };
+}
+
+// Local fallback store
+function loadLocalDb() {
+    try {
+        if (!fs.existsSync(DB_FILE)) {
+            const seed = getInitialSeedData();
+            fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), "utf8");
+            return seed;
+        }
+        const raw = fs.readFileSync(DB_FILE, "utf8");
+        return JSON.parse(raw);
+    } catch (err) {
+        console.error("[Database] Error reading local db, reverting to seed:", err.message);
+        const seed = getInitialSeedData();
+        fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), "utf8");
+        return seed;
+    }
+}
+
+function saveLocalDb(data) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
+}
+
+const db = {
+    // Test PostgreSQL or fallback
+    async testConnection() {
+        console.log("=========================================");
+        console.log("  MedIntelliX Database Architecture");
+        console.log("  Developer: Sonia");
+        console.log("  Database Tech Stack: PostgreSQL (pg)");
+
+        const pool = getPgPool();
+        if (pool) {
+            try {
+                const client = await pool.connect();
+                await client.query("SELECT 1;");
+                client.release();
+                isPostgresConnected = true;
+                console.log("  STATUS: 🟢 Connected to Live PostgreSQL Database!");
+                console.log("=========================================");
+                return true;
+            } catch (err) {
+                isPostgresConnected = false;
+                console.log("  STATUS: 🟡 Remote PostgreSQL not reachable: " + err.message);
+                console.log("  STATUS: 🟢 Running in High-Speed Local Persistent Store (db.json active)");
+                console.log("=========================================");
+                return false;
+            }
+        } else {
+            isPostgresConnected = false;
+            console.log("  STATUS: 🟡 No DATABASE_URL specified.");
+            console.log("  STATUS: 🟢 Running in High-Speed Local Persistent Store (db.json active)");
+            console.log("=========================================");
+            return false;
+        }
+    },
+
+    // User Operations
+    async findUserByEmail(email) {
+        const normalized = email.trim().toLowerCase();
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query("SELECT * FROM users WHERE LOWER(email) = $1 LIMIT 1", [normalized]);
+                if (res.rows.length > 0) return res.rows[0];
+            } catch (e) {
+                console.warn("[PostgreSQL Query Fallback - findUserByEmail]:", e.message);
+            }
+        }
+        const store = loadLocalDb();
+        return store.users.find((u) => u.email.toLowerCase() === normalized) || null;
+    },
+
+    async findUserById(id) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query("SELECT * FROM users WHERE id = $1 LIMIT 1", [id]);
+                if (res.rows.length > 0) return res.rows[0];
+            } catch (e) {
+                console.warn("[PostgreSQL Query Fallback - findUserById]:", e.message);
+            }
+        }
+        const store = loadLocalDb();
+        return store.users.find((u) => u.id === id) || null;
+    },
+
+    async createUser(userData) {
+        const id = "usr_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+        const newUser = {
+            id,
+            full_name: userData.full_name,
+            email: userData.email.trim().toLowerCase(),
+            password_hash: userData.password_hash,
+            role: userData.role,
+            organisation_name: userData.organisation_name || null,
+            institution_id: userData.institution_id || null,
+            phone: userData.phone || null,
+            is_verified: true,
+            created_at: new Date().toISOString()
+        };
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO users (id, full_name, email, password_hash, role, organisation_name, institution_id, phone, is_verified)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                    [
+                        newUser.id,
+                        newUser.full_name,
+                        newUser.email,
+                        newUser.password_hash,
+                        newUser.role,
+                        newUser.organisation_name,
+                        newUser.institution_id,
+                        newUser.phone,
+                        newUser.is_verified
+                    ]
+                );
+                if (newUser.role === "patient") {
+                    await pool.query(
+                        `INSERT INTO patient_profiles (id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+                        ["prof_" + Date.now(), newUser.id]
+                    );
+                }
+                return newUser;
+            } catch (e) {
+                console.warn("[PostgreSQL Insert Fallback - createUser]:", e.message);
+            }
+        }
+
+        // Local Store Fallback
+        const store = loadLocalDb();
+        store.users.push(newUser);
+        if (userData.role === "patient") {
+            store.patient_profiles.push({
+                id: "prof_" + Date.now(),
+                user_id: id,
+                date_of_birth: null,
+                gender: null,
+                blood_group: null
+            });
+        }
+        saveLocalDb(store);
+        return newUser;
+    },
+
+    // Patient Dashboard
+    async getPatientDashboardData(userId) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const userRes = await pool.query("SELECT id, full_name, email, role FROM users WHERE id = $1", [userId]);
+                const profRes = await pool.query("SELECT * FROM patient_profiles WHERE user_id = $1", [userId]);
+                const aptRes = await pool.query("SELECT * FROM appointments WHERE patient_id = $1 ORDER BY appointment_date ASC", [userId]);
+                const medRes = await pool.query("SELECT * FROM medications WHERE patient_id = $1", [userId]);
+                const recRes = await pool.query("SELECT * FROM medical_records WHERE patient_id = $1", [userId]);
+
+                const records = recRes.rows || [];
+                const medications = medRes.rows || [];
+                const appointments = aptRes.rows || [];
+
+                return {
+                    user: userRes.rows[0] || null,
+                    profile: profRes.rows[0] || {},
+                    statistics: {
+                        records: records.length,
+                        reports: records.filter((r) => (r.category || "").includes("Report")).length,
+                        medications: medications.filter((m) => m.status === "Active").length,
+                        appointments: appointments.filter((a) => a.status === "Confirmed" || a.status === "Scheduled").length
+                    },
+                    recentAppointments: appointments.slice(0, 5),
+                    medications: medications.slice(0, 5),
+                    records: records.slice(0, 5)
+                };
+            } catch (e) {
+                console.warn("[PostgreSQL Query Fallback - getPatientDashboardData]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        const user = store.users.find((u) => u.id === userId);
+        const profile = store.patient_profiles.find((p) => p.user_id === userId) || {};
+        const appointments = store.appointments.filter((a) => a.patient_id === userId);
+        const medications = store.medications.filter((m) => m.patient_id === userId);
+        const records = store.medical_records.filter((r) => r.patient_id === userId);
+
+        return {
+            user: user
+                ? {
+                      id: user.id,
+                      full_name: user.full_name,
+                      email: user.email,
+                      role: user.role
+                  }
+                : null,
+            profile,
+            statistics: {
+                records: records.length,
+                reports: records.filter((r) => r.category.includes("Report")).length,
+                medications: medications.filter((m) => m.status === "Active").length,
+                appointments: appointments.filter((a) => a.status === "Confirmed" || a.status === "Scheduled").length
+            },
+            recentAppointments: appointments.slice(0, 5),
+            medications: medications.slice(0, 5),
+            records: records.slice(0, 5)
+        };
+    },
+
+    // Appointments
+    async getAppointments(userId, role) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res =
+                    role === "patient"
+                        ? await pool.query("SELECT * FROM appointments WHERE patient_id = $1 ORDER BY appointment_date ASC", [userId])
+                        : await pool.query("SELECT * FROM appointments ORDER BY appointment_date ASC");
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getAppointments]:", e.message);
+            }
+        }
+        const store = loadLocalDb();
+        return role === "patient" ? store.appointments.filter((a) => a.patient_id === userId) : store.appointments;
+    },
+
+    async createAppointment(appointmentData) {
+        const id = "apt_" + Date.now();
+        const newApt = {
+            id,
+            ...appointmentData,
+            status: "Confirmed",
+            created_at: new Date().toISOString()
+        };
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO appointments (id, patient_id, patient_name, doctor_name, department, hospital_name, appointment_date, appointment_time, type, status, reason)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+                    [
+                        newApt.id,
+                        newApt.patient_id,
+                        newApt.patient_name,
+                        newApt.doctor_name,
+                        newApt.department,
+                        newApt.hospital_name,
+                        newApt.appointment_date,
+                        newApt.appointment_time,
+                        newApt.type,
+                        newApt.status,
+                        newApt.reason
+                    ]
+                );
+                return newApt;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - createAppointment]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        store.appointments.push(newApt);
+        saveLocalDb(store);
+        return newApt;
+    },
+
+    // Medications
+    async getMedications(userId) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query("SELECT * FROM medications WHERE patient_id = $1", [userId]);
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getMedications]:", e.message);
+            }
+        }
+        const store = loadLocalDb();
+        return store.medications.filter((m) => m.patient_id === userId);
+    },
+
+    async addMedication(medData) {
+        const id = "med_" + Date.now();
+        const newMed = {
+            id,
+            ...medData,
+            status: "Active",
+            created_at: new Date().toISOString()
+        };
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO medications (id, patient_id, medication_name, dosage, frequency, timing, prescribed_by, status, instructions)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                    [
+                        newMed.id,
+                        newMed.patient_id,
+                        newMed.medication_name,
+                        newMed.dosage,
+                        newMed.frequency,
+                        newMed.timing,
+                        newMed.prescribed_by,
+                        newMed.status,
+                        newMed.instructions
+                    ]
+                );
+                return newMed;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - addMedication]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        store.medications.push(newMed);
+        saveLocalDb(store);
+        return newMed;
+    },
+
+    // Medical Records
+    async getMedicalRecords(userId) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query("SELECT * FROM medical_records WHERE patient_id = $1", [userId]);
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getMedicalRecords]:", e.message);
+            }
+        }
+        const store = loadLocalDb();
+        return store.medical_records.filter((r) => r.patient_id === userId);
+    },
+
+    async addMedicalRecord(recData) {
+        const id = "rec_" + Date.now();
+        const newRec = {
+            id,
+            ...recData,
+            created_at: new Date().toISOString()
+        };
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO medical_records (id, patient_id, title, category, facility_name, doctor_name, record_date, file_url, summary, ai_insights)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                    [
+                        newRec.id,
+                        newRec.patient_id,
+                        newRec.title,
+                        newRec.category,
+                        newRec.facility_name,
+                        newRec.doctor_name,
+                        newRec.record_date,
+                        newRec.file_url,
+                        newRec.summary,
+                        newRec.ai_insights
+                    ]
+                );
+                return newRec;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - addMedicalRecord]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        store.medical_records.push(newRec);
+        saveLocalDb(store);
+        return newRec;
+    },
+
+    // Audit Logging
+    async logAudit(log) {
+        try {
+            const id = "log_" + Date.now();
+            if (isPostgresConnected) {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO audit_logs (id, user_id, user_email, role, action, resource, ip_address)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                    [id, log.user_id, log.user_email, log.role, log.action, log.resource, log.ip_address]
+                );
+                return;
+            }
+            const store = loadLocalDb();
+            store.audit_logs.push({
+                id,
+                ...log,
+                timestamp: new Date().toISOString()
+            });
+            if (store.audit_logs.length > 1000) store.audit_logs.shift();
+            saveLocalDb(store);
+        } catch (e) {
+            console.error("Audit log error:", e.message);
+        }
+    }
+};
+
+module.exports = db;

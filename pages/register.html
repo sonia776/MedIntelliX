@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | MedIntelliX</title>
+
+    <meta
+        name="description"
+        content="Create a MedIntelliX account to access the appropriate healthcare portal."
+    >
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Registration Styles -->
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/register.css">
+</head>
+
+<body>
+
+    <!-- Background Decoration -->
+    <div class="login-background">
+        <div class="background-circle circle-one"></div>
+        <div class="background-circle circle-two"></div>
+    </div>
+
+    <main class="register-container">
+
+        <!-- Left Introduction Panel -->
+        <section class="login-intro register-intro">
+
+            <a href="../index.html" class="brand-logo">
+                <span class="brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <span>
+                    MedIntelliX
+                    <small>Intelligent Healthcare. Connected Care.</small>
+                </span>
+            </a>
+
+            <div class="intro-content">
+
+                <span class="intro-label">
+                    <i class="bi bi-person-plus"></i>
+                    Start Your Journey
+                </span>
+
+                <h1>
+                    One platform.
+                    <span>Connected care.</span>
+                </h1>
+
+                <p>
+                    Create an account to access the MedIntelliX
+                    workspace designed for your role in healthcare.
+                </p>
+
+                <div class="intro-features">
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-person-heart"></i>
+                        </span>
+
+                        <div>
+                            <h3>For Patients</h3>
+                            <p>Access your own health information and care journey.</p>
+                        </div>
+                    </div>
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-hospital"></i>
+                        </span>
+
+                        <div>
+                            <h3>For Healthcare Institutions</h3>
+                            <p>Support authorised clinical and administrative workflows.</p>
+                        </div>
+                    </div>
+
+                    <div class="intro-feature">
+                        <span class="feature-icon">
+                            <i class="bi bi-building-check"></i>
+                        </span>
+
+                        <div>
+                            <h3>For Public Health Teams</h3>
+                            <p>Support responsible, authorised public-health reporting.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <p class="intro-footer">
+                © <span id="registerYear"></span> MedIntelliX.
+                Built for connected healthcare.
+            </p>
+
+        </section>
+
+
+        <!-- Registration Panel -->
+        <section class="register-panel">
+
+            <div class="register-card">
+
+                <!-- Mobile Brand -->
+                <div class="mobile-brand">
+                    <a href="../index.html" class="brand-logo">
+                        <span class="brand-icon">
+                            <i class="bi bi-heart-pulse-fill"></i>
+                        </span>
+
+                        <span>
+                            MedIntelliX
+                            <small>Connected Healthcare</small>
+                        </span>
+                    </a>
+                </div>
+
+
+                <!-- Heading -->
+                <div class="register-heading">
+                    <span class="welcome-label">GET STARTED</span>
+
+                    <h2>Create your account</h2>
+
+                    <p>
+                        Enter your details to begin your registration.
+                    </p>
+                </div>
+
+
+                <!-- Account Type -->
+                <div class="portal-selection">
+
+                    <label class="form-label">
+                        I want to register as
+                    </label>
+
+                    <div class="portal-options">
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="accountType"
+                                value="patient"
+                                checked
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-person-heart"></i>
+                                <span>Patient</span>
+                            </span>
+                        </label>
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="accountType"
+                                value="hospital"
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-hospital"></i>
+                                <span>Hospital</span>
+                            </span>
+                        </label>
+
+                        <label class="portal-option">
+                            <input
+                                type="radio"
+                                name="accountType"
+                                value="government"
+                            >
+
+                            <span class="portal-option-content">
+                                <i class="bi bi-building"></i>
+                                <span>Government</span>
+                            </span>
+                        </label>
+
+                    </div>
+                </div>
+
+
+                <!-- Registration Form -->
+                <form id="registerForm" novalidate>
+
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">
+                            Full name
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-person input-icon"></i>
+
+                            <input
+                                type="text"
+                                class="form-control custom-input"
+                                id="fullName"
+                                name="fullName"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                minlength="2"
+                                maxlength="100"
+                                required
+                            >
+                        </div>
+
+                        <div class="invalid-feedback">
+                            Please enter your full name.
+                        </div>
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="registerEmail" class="form-label">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-envelope input-icon"></i>
+
+                            <input
+                                type="email"
+                                class="form-control custom-input"
+                                id="registerEmail"
+                                name="email"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                maxlength="254"
+                                required
+                            >
+                        </div>
+
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
+                        </div>
+                    </div>
+
+
+                    <!-- Organisation Details -->
+                    <div id="organisationFields" hidden>
+
+                        <div class="form-group">
+                            <label
+                                for="organisationName"
+                                class="form-label"
+                                id="organisationLabel"
+                            >
+                                Organisation name
+                            </label>
+
+                            <div class="input-wrapper">
+                                <i class="bi bi-building input-icon"></i>
+
+                                <input
+                                    type="text"
+                                    class="form-control custom-input"
+                                    id="organisationName"
+                                    name="organisationName"
+                                    placeholder="Enter organisation name"
+                                    maxlength="150"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label
+                                for="institutionId"
+                                class="form-label"
+                                id="institutionIdLabel"
+                            >
+                                Institutional ID
+                            </label>
+
+                            <div class="input-wrapper">
+                                <i class="bi bi-card-text input-icon"></i>
+
+                                <input
+                                    type="text"
+                                    class="form-control custom-input"
+                                    id="institutionId"
+                                    name="institutionId"
+                                    placeholder="Enter your institutional ID"
+                                    maxlength="100"
+                                >
+                            </div>
+
+                            <small class="field-help">
+                                Institutional accounts require verification
+                                before access is granted.
+                            </small>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="registerPassword" class="form-label">
+                            Create password
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock input-icon"></i>
+
+                            <input
+                                type="password"
+                                class="form-control custom-input"
+                                id="registerPassword"
+                                name="password"
+                                placeholder="Create a strong password"
+                                autocomplete="new-password"
+                                minlength="12"
+                                maxlength="128"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="registerPassword"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <small class="field-help">
+                            Use at least 12 characters. Avoid passwords
+                            you use for other accounts.
+                        </small>
+
+                        <div class="invalid-feedback">
+                            Use a password of at least 12 characters.
+                        </div>
+                    </div>
+
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">
+                            Confirm password
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock-fill input-icon"></i>
+
+                            <input
+                                type="password"
+                                class="form-control custom-input"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                placeholder="Enter your password again"
+                                autocomplete="new-password"
+                                minlength="12"
+                                maxlength="128"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="confirmPassword"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="invalid-feedback">
+                            Passwords must match.
+                        </div>
+                    </div>
+
+
+                    <!-- Terms -->
+                    <div class="terms-group">
+
+                        <label class="terms-option">
+                            <input
+                                type="checkbox"
+                                id="acceptTerms"
+                                name="acceptTerms"
+                                required
+                            >
+
+                            <span>
+                                I agree to the
+                                <a href="#" id="termsLink">Terms of Service</a>
+                                and
+                                <a href="#" id="privacyLink">Privacy Policy</a>.
+                            </span>
+                        </label>
+
+                    </div>
+
+
+                    <!-- Status Message -->
+                    <div
+                        id="registerMessage"
+                        class="login-message"
+                        role="status"
+                        aria-live="polite"
+                        hidden
+                    ></div>
+
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="btn login-button"
+                        id="registerButton"
+                    >
+                        <span>Create Account</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+
+                </form>
+
+
+                <!-- Sign In Link -->
+                <div class="register-prompt">
+                    <p>
+                        Already have an account?
+                        <a href="login.html">Sign in</a>
+                    </p>
+                </div>
+
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <i class="bi bi-shield-lock-fill"></i>
+
+                    <p>
+                        Registration does not automatically authorise
+                        access to protected healthcare records.
+                        Institutional accounts require verification.
+                    </p>
+                </div>
+
+
+                <!-- Back Home -->
+                <div class="back-home">
+                    <a href="../index.html">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to homepage
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Registration JavaScript -->
+    <script src="../js/register.js"></script>
+
+</body>
+</html>

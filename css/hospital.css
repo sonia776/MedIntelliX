@@ -1,0 +1,236 @@
+
+/* MedIntelliX Hospital Portal */
+
+:root {
+    --hospital-primary: #187c80;
+    --hospital-primary-dark: #12666a;
+    --hospital-text: #20313f;
+    --hospital-muted: #637381;
+    --hospital-border: #e3eaf0;
+    --hospital-background: #f7f9fc;
+}
+
+body {
+    background: var(--hospital-background);
+    color: var(--hospital-text);
+}
+
+.portal-layout {
+    min-height: 100vh;
+}
+
+.portal-main {
+    min-width: 0;
+}
+
+.portal-content {
+    padding: 28px;
+}
+
+.portal-sidebar .sidebar-link.active {
+    background: #e5f4f3;
+    color: var(--hospital-primary-dark);
+    font-weight: 700;
+}
+
+.portal-sidebar .sidebar-link.active i {
+    color: var(--hospital-primary);
+}
+
+.portal-sidebar .sidebar-link:focus-visible,
+.portal-topbar button:focus-visible,
+.portal-topbar a:focus-visible,
+.hospital-action:focus-visible,
+.hospital-text-link:focus-visible {
+    outline: 3px solid #8dcac7;
+    outline-offset: 3px;
+}
+
+.hospital-page a {
+    transition: color .2s ease;
+}
+
+.hospital-page button {
+    font: inherit;
+}
+
+.hospital-page .hospital-text-link:focus-visible {
+    border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+    .portal-content {
+        padding: 20px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .portal-content {
+        padding: 16px 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hospital-page *,
+    .hospital-page *::before,
+    .hospital-page *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* Medical Reports page */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-pending {
+    color: #8a5a00;
+    background: #fff3d6;
+}
+
+.status-reviewed {
+    color: #176b4d;
+    background: #e0f5eb;
+}
+
+.status-archived {
+    color: #586575;
+    background: #edf0f4;
+}
+
+.report-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.report-detail-grid div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.report-detail-grid span {
+    color: var(--text-secondary, #637381);
+    font-size: 0.8rem;
+}
+
+.report-detail-grid strong {
+    color: var(--text-primary, #20313f);
+    overflow-wrap: anywhere;
+}
+
+.portal-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1100;
+    max-width: calc(100vw - 32px);
+    padding: 13px 18px;
+    border-radius: 12px;
+    background: #20313f;
+    color: white;
+    box-shadow: 0 8px 30px rgba(32, 49, 63, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.portal-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 576px) {
+    .report-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Staff Management */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-active {
+    color: #176b4d;
+    background: #e0f5eb;
+}
+
+.status-pending {
+    color: #8a5a00;
+    background: #fff3d6;
+}
+
+.status-inactive {
+    color: #586575;
+    background: #edf0f4;
+}
+
+.report-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.report-detail-grid div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.report-detail-grid span {
+    color: var(--text-secondary, #637381);
+    font-size: 0.8rem;
+}
+
+.report-detail-grid strong {
+    color: var(--text-primary, #20313f);
+    overflow-wrap: anywhere;
+}
+
+.portal-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1100;
+    max-width: calc(100vw - 32px);
+    padding: 13px 18px;
+    border-radius: 12px;
+    background: #20313f;
+    color: #fff;
+    box-shadow: 0 8px 30px rgba(32, 49, 63, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.portal-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 576px) {
+    .report-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}

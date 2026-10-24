@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MedIntelliX hospital management dashboard demonstration.">
+    <title>Hospital Dashboard | MedIntelliX</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/hospital.css">
+
+    <style>
+        .hospital-page { max-width: 1250px; margin: auto; }
+        .hospital-welcome {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 18px; flex-wrap: wrap; margin-bottom: 25px;
+        }
+        .hospital-welcome h1 {
+            color: #20313f; font-size: clamp(1.65rem,3vw,2.15rem);
+            font-weight: 750; margin-bottom: 8px;
+        }
+        .hospital-welcome p { color: #637381; margin: 0; line-height: 1.7; }
+        .hospital-demo-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 12px; border: 1px solid #cfe6e4; border-radius: 25px;
+            background: #e5f4f3; color: #12666a; font-size: 11px; font-weight: 700;
+        }
+        .hospital-overview {
+            display: grid; grid-template-columns: repeat(4,minmax(0,1fr));
+            gap: 16px; margin-bottom: 25px;
+        }
+        .hospital-stat {
+            background: white; border: 1px solid #e3eaf0;
+            border-radius: 16px; padding: 20px; min-width: 0;
+        }
+        .hospital-stat-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+        .hospital-stat-icon {
+            width: 43px; height: 43px; border-radius: 12px;
+            display: grid; place-items: center; font-size: 19px;
+        }
+        .hospital-stat-icon.teal { background: #e5f4f3; color: #187c80; }
+        .hospital-stat-icon.blue { background: #eaf2fa; color: #3978bd; }
+        .hospital-stat-icon.coral { background: #fff0ec; color: #d77b65; }
+        .hospital-stat-icon.purple { background: #eee8ff; color: #8063b5; }
+        .hospital-stat-label { color: #637381; font-size: 12px; margin-bottom: 7px; }
+        .hospital-stat-value { color: #20313f; font-size: 28px; font-weight: 750; line-height: 1.2; }
+        .hospital-stat-note { color: #84919d; font-size: 11px; margin-top: 8px; line-height: 1.5; }
+        .hospital-main-grid { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(260px,.85fr); gap: 20px; }
+        .hospital-panel {
+            background: white; border: 1px solid #e3eaf0;
+            border-radius: 16px; padding: 23px; margin-bottom: 20px; min-width: 0;
+        }
+        .hospital-panel:last-child { margin-bottom: 0; }
+        .hospital-panel-heading {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            gap: 12px; margin-bottom: 20px;
+        }
+        .hospital-panel-heading h2 { color: #20313f; font-size: 16px; font-weight: 750; margin: 0 0 5px; }
+        .hospital-panel-heading p { color: #84919d; font-size: 12px; margin: 0; line-height: 1.6; }
+        .hospital-text-link { color: #187c80; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+        .hospital-text-link:hover { text-decoration: underline; }
+        .hospital-activity { display: flex; gap: 13px; padding: 15px 0; border-bottom: 1px solid #edf1f5; }
+        .hospital-activity:last-child { border-bottom: 0; padding-bottom: 0; }
+        .hospital-activity-icon {
+            width: 39px; height: 39px; flex-shrink: 0; border-radius: 11px;
+            display: grid; place-items: center; background: #e5f4f3; color: #187c80;
+        }
+        .hospital-activity-icon.blue { background: #eaf2fa; color: #3978bd; }
+        .hospital-activity-icon.coral { background: #fff0ec; color: #d77b65; }
+        .hospital-activity-icon.purple { background: #eee8ff; color: #8063b5; }
+        .hospital-activity-title { color: #20313f; font-size: 13px; font-weight: 700; margin: 0 0 5px; }
+        .hospital-activity-description { color: #637381; font-size: 12px; line-height: 1.6; margin: 0 0 5px; }
+        .hospital-activity-time { color: #84919d; font-size: 11px; }
+        .hospital-status {
+            display: inline-flex; align-items: center; gap: 5px; border-radius: 20px;
+            padding: 5px 9px; background: #e5f4f3; color: #12666a; font-size: 10px; font-weight: 700;
+        }
+        .hospital-status.pending { background: #fff0ec; color: #a95743; }
+        .hospital-status.review { background: #eaf2fa; color: #315f91; }
+        .hospital-quick-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+        .hospital-action {
+            display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+            text-decoration: none; color: #20313f; background: #fff;
+            border: 1px solid #e3eaf0; border-radius: 13px; padding: 16px;
+            transition: border-color .2s, transform .2s;
+        }
+        .hospital-action:hover { color: #20313f; border-color: #a9d4d2; transform: translateY(-2px); }
+        .hospital-action i { color: #187c80; font-size: 22px; }
+        .hospital-action strong { font-size: 12px; line-height: 1.5; }
+        .hospital-action span { color: #84919d; font-size: 11px; line-height: 1.5; }
+        .hospital-table-wrap { overflow-x: auto; }
+        .hospital-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+        .hospital-table th { padding: 12px 10px; text-align: left; color: #84919d; font-size: 11px; font-weight: 650; border-bottom: 1px solid #e3eaf0; }
+        .hospital-table td { padding: 15px 10px; color: #526270; font-size: 12px; border-bottom: 1px solid #edf1f5; vertical-align: middle; }
+        .hospital-table tbody tr:last-child td { border-bottom: 0; }
+        .hospital-patient-name { color: #20313f; font-weight: 700; margin-bottom: 3px; }
+        .hospital-patient-id { color: #84919d; font-size: 10px; }
+        .hospital-note {
+            display: flex; align-items: flex-start; gap: 10px; padding: 14px;
+            background: #f1f7fb; border: 1px solid #e1edf5; border-radius: 12px;
+            color: #637381; font-size: 12px; line-height: 1.7; margin-top: 20px;
+        }
+        .hospital-note i { color: #3978bd; font-size: 17px; }
+        .hospital-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 24px 0 8px; color: #84919d; font-size: 11px; }
+
+        @media(max-width:1050px) {
+            .hospital-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .hospital-main-grid { grid-template-columns: 1fr; }
+        }
+        @media(max-width:520px) {
+            .hospital-overview { gap: 10px; }
+            .hospital-stat { padding: 15px; }
+            .hospital-stat-value { font-size: 24px; }
+            .hospital-panel { padding: 17px; }
+            .hospital-quick-actions { gap: 9px; }
+            .hospital-action { padding: 13px; }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            .hospital-action { transition: none; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="portal-layout">
+
+    <aside class="portal-sidebar" id="patientSidebar" aria-label="Hospital navigation">
+        <a href="../../index.html" class="portal-brand text-decoration-none">
+            <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+            <span>MedIntelliX</span>
+        </a>
+
+        <div class="sidebar-section-label">HOSPITAL PORTAL</div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link active" aria-current="page">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="patients.html" class="sidebar-link">
+                <i class="bi bi-people"></i><span>Patients</span>
+            </a>
+            <a href="register-patient.html" class="sidebar-link">
+                <i class="bi bi-person-plus"></i><span>Register patient</span>
+            </a>
+            <a href="consultations.html" class="sidebar-link">
+                <i class="bi bi-clipboard2-pulse"></i><span>Consultations</span>
+            </a>
+            <a href="medical-reports.html" class="sidebar-link">
+                <i class="bi bi-file-earmark-medical"></i><span>Medical reports</span>
+            </a>
+            <a href="staff.html" class="sidebar-link">
+                <i class="bi bi-person-gear"></i><span>Staff & permissions</span>
+            </a>
+            <a href="hospital-profile.html" class="sidebar-link">
+                <i class="bi bi-building"></i><span>Hospital profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help">
+                <i class="bi bi-shield-check"></i>
+                <div><strong>Responsible care</strong><p>Protect patient privacy and access.</p></div>
+            </div>
+            <a href="../login.html" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
+
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                    aria-label="Open navigation" aria-controls="patientSidebar" aria-expanded="false">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-page-title">
+                <span>Hospital Portal</span>
+                <strong>Dashboard</strong>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="topbar-icon-button" id="notificationButton" type="button" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <a href="hospital-profile.html" class="topbar-profile text-decoration-none">
+                    <span class="topbar-avatar" id="hospitalInitials">EH</span>
+                    <span class="topbar-profile-text">
+                        <strong id="hospitalNameShort">Example Hospital</strong>
+                        <small>Hospital administrator</small>
+                    </span>
+                </a>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="hospital-page">
+
+                <section class="hospital-welcome">
+                    <div>
+                        <h1>Hospital overview</h1>
+                        <p>Welcome back. Here's a snapshot of your hospital's sample activity.</p>
+                    </div>
+                    <span class="hospital-demo-badge">
+                        <i class="bi bi-info-circle"></i> DEMO DATA
+                    </span>
+                </section>
+
+                <section class="hospital-overview" aria-label="Hospital summary">
+                    <article class="hospital-stat">
+                        <div class="hospital-stat-top">
+                            <span class="hospital-stat-icon teal"><i class="bi bi-people"></i></span>
+                            <i class="bi bi-three-dots" style="color:#84919d"></i>
+                        </div>
+                        <div class="hospital-stat-label">Enrolled patients</div>
+                        <div class="hospital-stat-value" id="hospitalPatientCount">248</div>
+                        <div class="hospital-stat-note">Sample registered patient profiles</div>
+                    </article>
+
+                    <article class="hospital-stat">
+                        <div class="hospital-stat-top">
+                            <span class="hospital-stat-icon blue"><i class="bi bi-calendar2-check"></i></span>
+                            <i class="bi bi-three-dots" style="color:#84919d"></i>
+                        </div>
+                        <div class="hospital-stat-label">Today's consultations</div>
+                        <div class="hospital-stat-value" id="hospitalConsultationCount">18</div>
+                        <div class="hospital-stat-note">Illustrative daily activity</div>
+                    </article>
+
+                    <article class="hospital-stat">
+                        <div class="hospital-stat-top">
+                            <span class="hospital-stat-icon coral"><i class="bi bi-file-earmark-medical"></i></span>
+                            <i class="bi bi-three-dots" style="color:#84919d"></i>
+                        </div>
+                        <div class="hospital-stat-label">Reports to review</div>
+                        <div class="hospital-stat-value" id="hospitalReportCount">7</div>
+                        <div class="hospital-stat-note">Example pending report entries</div>
+                    </article>
+
+                    <article class="hospital-stat">
+                        <div class="hospital-stat-top">
+                            <span class="hospital-stat-icon purple"><i class="bi bi-person-badge"></i></span>
+                            <i class="bi bi-three-dots" style="color:#84919d"></i>
+                        </div>
+                        <div class="hospital-stat-label">Active staff</div>
+                        <div class="hospital-stat-value" id="hospitalStaffCount">32</div>
+                        <div class="hospital-stat-note">Illustrative staff accounts</div>
+                    </article>
+                </section>
+
+                <div class="hospital-main-grid">
+                    <div>
+                        <section class="hospital-panel">
+                            <div class="hospital-panel-heading">
+                                <div>
+                                    <h2>Recent activity</h2>
+                                    <p>Example updates across the hospital portal.</p>
+                                </div>
+                                <i class="bi bi-activity fs-4" style="color:#187c80" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="hospital-activity">
+                                <span class="hospital-activity-icon"><i class="bi bi-person-plus"></i></span>
+                                <div>
+                                    <h3 class="hospital-activity-title">Patient registration recorded</h3>
+                                    <p class="hospital-activity-description">A sample patient profile was added to the demonstration list.</p>
+                                    <span class="hospital-activity-time">Today · Example activity</span>
+                                </div>
+                            </div>
+
+                            <div class="hospital-activity">
+                                <span class="hospital-activity-icon blue"><i class="bi bi-file-earmark-check"></i></span>
+                                <div>
+                                    <h3 class="hospital-activity-title">Medical report entry updated</h3>
+                                    <p class="hospital-activity-description">A sample laboratory report entry was marked for review.</p>
+                                    <span class="hospital-activity-time">Today · Example activity</span>
+                                </div>
+                            </div>
+
+                            <div class="hospital-activity">
+                                <span class="hospital-activity-icon coral"><i class="bi bi-calendar2-week"></i></span>
+                                <div>
+                                    <h3 class="hospital-activity-title">Consultation scheduled</h3>
+                                    <p class="hospital-activity-description">A demonstration consultation was added to the sample schedule.</p>
+                                    <span class="hospital-activity-time">Yesterday · Example activity</span>
+                                </div>
+                            </div>
+
+                            <div class="hospital-activity">
+                                <span class="hospital-activity-icon purple"><i class="bi bi-person-gear"></i></span>
+                                <div>
+                                    <h3 class="hospital-activity-title">Staff access review</h3>
+                                    <p class="hospital-activity-description">An example staff access review appears in the activity feed.</p>
+                                    <span class="hospital-activity-time">Yesterday · Example activity</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="hospital-panel">
+                            <div class="hospital-panel-heading">
+                                <div>
+                                    <h2>Recent patient records</h2>
+                                    <p>Fictional entries for interface demonstration.</p>
+                                </div>
+                                <a href="patients.html" class="hospital-text-link">View patients <i class="bi bi-arrow-right"></i></a>
+                            </div>
+
+                            <div class="hospital-table-wrap">
+                                <table class="hospital-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Record type</th>
+                                            <th>Updated</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><div class="hospital-patient-name">Sample Patient A</div><div class="hospital-patient-id">DEMO-P001</div></td>
+                                            <td>Consultation</td>
+                                            <td>20 Oct 2026</td>
+                                            <td><span class="hospital-status">Recorded</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="hospital-patient-name">Sample Patient B</div><div class="hospital-patient-id">DEMO-P002</div></td>
+                                            <td>Medical report</td>
+                                            <td>20 Oct 2026</td>
+                                            <td><span class="hospital-status pending">Review</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="hospital-patient-name">Sample Patient C</div><div class="hospital-patient-id">DEMO-P003</div></td>
+                                            <td>Follow-up</td>
+                                            <td>19 Oct 2026</td>
+                                            <td><span class="hospital-status review">Scheduled</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div>
+                        <section class="hospital-panel">
+                            <div class="hospital-panel-heading">
+                                <div>
+                                    <h2>Quick actions</h2>
+                                    <p>Navigate to common tasks.</p>
+                                </div>
+                            </div>
+
+                            <div class="hospital-quick-actions">
+                                <a href="register-patient.html" class="hospital-action">
+                                    <i class="bi bi-person-plus"></i>
+                                    <strong>Register patient</strong>
+                                    <span>Add a demo patient entry</span>
+                                </a>
+                                <a href="consultations.html" class="hospital-action">
+                                    <i class="bi bi-clipboard2-pulse"></i>
+                                    <strong>Consultations</strong>
+                                    <span>View sample visits</span>
+                                </a>
+                                <a href="medical-reports.html" class="hospital-action">
+                                    <i class="bi bi-file-earmark-medical"></i>
+                                    <strong>Medical reports</strong>
+                                    <span>Review report entries</span>
+                                </a>
+                                <a href="staff.html" class="hospital-action">
+                                    <i class="bi bi-person-gear"></i>
+                                    <strong>Manage staff</strong>
+                                    <span>Explore access roles</span>
+                                </a>
+                            </div>
+                        </section>
+
+                        <section class="hospital-panel">
+                            <div class="hospital-panel-heading">
+                                <div>
+                                    <h2>Organisation details</h2>
+                                    <p>Sample institutional information.</p>
+                                </div>
+                                <i class="bi bi-building fs-4" style="color:#187c80" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="hospital-activity">
+                                <span class="hospital-activity-icon"><i class="bi bi-hospital"></i></span>
+                                <div>
+                                    <h3 class="hospital-activity-title" id="hospitalOrganisationName">Example Hospital</h3>
+                                    <p class="hospital-activity-description">Demonstration healthcare institution</p>
+                                    <span class="hospital-activity-time">Institution ID: DEMO-H001</span>
+                                </div>
+                            </div>
+
+                            <a href="hospital-profile.html" class="hospital-text-link d-inline-block mt-3">
+                                View hospital profile <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="hospital-note">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <div>
+                        <strong>Privacy and access:</strong> All dashboard entries and statistics are fictional.
+                        This frontend does not authenticate staff or connect to patient records. A production
+                        system must enforce staff permissions and patient-level authorisation on the server.
+                    </div>
+                </div>
+
+                <footer class="hospital-footer">
+                    <span>© <span id="hospitalYear"></span> MedIntelliX</span>
+                    <span>Hospital Portal · Demonstration interface</span>
+                </footer>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/hospital/dashboard.js"></script>
+</body>
+</html>

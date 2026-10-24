@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Statistics | MedIntelliX</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/government.css">
+</head>
+
+<body class="portal-body government-layout">
+<div class="portal-shell">
+
+    <aside class="portal-sidebar" id="patientSidebar">
+        <div class="sidebar-brand">
+            <a href="../../index.html" class="brand-link">
+                <span class="brand-mark"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span>MedIntelliX<small>Government Portal</small></span>
+            </a>
+        </div>
+
+        <div class="sidebar-section-label">PUBLIC HEALTH</div>
+
+        <nav class="sidebar-nav">
+            <a class="sidebar-link" href="dashboard.html">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a class="sidebar-link active" href="health-statistics.html">
+                <i class="bi bi-bar-chart-line"></i><span>Health Statistics</span>
+            </a>
+            <a class="sidebar-link" href="regional-reports.html">
+                <i class="bi bi-file-earmark-bar-graph"></i><span>Regional Reports</span>
+            </a>
+            <a class="sidebar-link" href="hospital-network.html">
+                <i class="bi bi-hospital"></i><span>Hospital Network</span>
+            </a>
+            <a class="sidebar-link" href="public-health-programs.html">
+                <i class="bi bi-clipboard2-pulse"></i><span>Public Health Programs</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                    <strong>Privacy first</strong>
+                    <p>Use aggregated statistics for public-health planning.</p>
+                </div>
+            </div>
+            <a href="../login.html" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Exit portal</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-heading">
+                <span class="topbar-eyebrow">Government / Analytics</span>
+                <h1>Health Statistics</h1>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="notification-button" id="notificationButton" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <div class="government-avatar">GA</div>
+            </div>
+        </header>
+
+        <div class="portal-content">
+
+            <div class="government-demo-notice">
+                <i class="bi bi-info-circle-fill"></i>
+                <div>
+                    <strong>Demonstration statistics</strong>
+                    <p>All values on this page are fictional examples, not official government health data.</p>
+                </div>
+            </div>
+
+            <section class="government-welcome">
+                <div>
+                    <span class="section-kicker">DATA &amp; INSIGHTS</span>
+                    <h2>Understand regional health trends</h2>
+                    <p>Explore sample indicators to demonstrate how aggregated health data could support public-health planning.</p>
+                </div>
+                <div class="statistics-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            </section>
+
+            <section class="statistics-controls">
+                <div class="statistics-control">
+                    <label for="periodFilter">Reporting period</label>
+                    <select id="periodFilter" class="form-select">
+                        <option value="month">Current month</option>
+                        <option value="quarter">Current quarter</option>
+                        <option value="year">Current year</option>
+                    </select>
+                </div>
+
+                <div class="statistics-control">
+                    <label for="indicatorFilter">Health indicator</label>
+                    <select id="indicatorFilter" class="form-select">
+                        <option value="coverage">Healthcare coverage</option>
+                        <option value="screening">Preventive screening</option>
+                        <option value="followup">Follow-up completion</option>
+                        <option value="readiness">Facility readiness</option>
+                    </select>
+                </div>
+
+                <button class="btn statistics-reset" id="resetStatistics">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset filters
+                </button>
+            </section>
+
+            <section class="government-stat-grid">
+                <article class="government-stat-card">
+                    <div class="government-stat-icon"><i class="bi bi-people"></i></div>
+                    <span>Population coverage</span>
+                    <strong id="populationCoverage">82%</strong>
+                    <small>Illustrative coverage indicator</small>
+                </article>
+
+                <article class="government-stat-card">
+                    <div class="government-stat-icon"><i class="bi bi-clipboard2-check"></i></div>
+                    <span>Screening participation</span>
+                    <strong id="screeningParticipation">74%</strong>
+                    <small>Illustrative participation rate</small>
+                </article>
+
+                <article class="government-stat-card">
+                    <div class="government-stat-icon"><i class="bi bi-calendar2-check"></i></div>
+                    <span>Follow-up completion</span>
+                    <strong id="followupCompletion">79%</strong>
+                    <small>Illustrative completion rate</small>
+                </article>
+
+                <article class="government-stat-card">
+                    <div class="government-stat-icon"><i class="bi bi-hospital"></i></div>
+                    <span>Facility readiness</span>
+                    <strong id="facilityReadiness">81%</strong>
+                    <small>Illustrative readiness indicator</small>
+                </article>
+            </section>
+
+            <section class="government-content-grid statistics-content-grid">
+
+                <article class="government-panel statistics-chart-panel">
+                    <div class="government-panel-heading">
+                        <div>
+                            <h3 id="statisticsChartTitle">Healthcare coverage by region</h3>
+                            <p>Illustrative comparison across five regions</p>
+                        </div>
+                        <span class="statistics-chart-icon"><i class="bi bi-bar-chart-fill"></i></span>
+                    </div>
+
+                    <div id="statisticsChart" class="statistics-chart" aria-live="polite"></div>
+
+                    <div class="statistics-chart-footnote">
+                        <i class="bi bi-info-circle"></i>
+                        Values represent fictional percentages for interface testing.
+                    </div>
+                </article>
+
+                <article class="government-panel statistics-insight-panel">
+                    <div class="government-panel-heading">
+                        <div>
+                            <h3>Planning insights</h3>
+                            <p>Automatically generated from demo data</p>
+                        </div>
+                    </div>
+
+                    <div id="statisticsInsights" class="statistics-insights"></div>
+                </article>
+            </section>
+
+            <section class="government-panel statistics-table-panel">
+                <div class="government-panel-heading statistics-table-heading">
+                    <div>
+                        <h3>Regional indicator comparison</h3>
+                        <p>Compare sample indicators across regions</p>
+                    </div>
+                    <div class="statistics-search">
+                        <i class="bi bi-search"></i>
+                        <input type="search" id="statisticsSearch" placeholder="Search regions..." aria-label="Search regions">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table government-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>Coverage</th>
+                                <th>Screening</th>
+                                <th>Follow-up</th>
+                                <th>Readiness</th>
+                                <th>Sample status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statisticsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="statisticsEmptyState" class="government-empty-state" hidden>
+                    <i class="bi bi-search"></i>
+                    <p>No matching regions found.</p>
+                </div>
+            </section>
+
+            <div class="statistics-privacy-note">
+                <i class="bi bi-shield-lock"></i>
+                <p><strong>Privacy principle:</strong> A production public-health portal should use appropriately aggregated or de-identified data, apply minimum-group-size safeguards, and restrict access according to authorised responsibilities.</p>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div id="governmentToast" class="government-toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/government/statistics.js"></script>
+</body>
+</html>

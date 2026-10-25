@@ -37,6 +37,17 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Normalize URL for Vercel serverless rewrites
+app.use((req, res, next) => {
+    const matchedPath = req.headers["x-matched-path"] || req.headers["x-invoke-path"];
+    if (matchedPath && req.url.startsWith("/src/server.js")) {
+        const queryIndex = req.url.indexOf("?");
+        const query = queryIndex !== -1 ? req.url.slice(queryIndex) : "";
+        req.url = matchedPath + query;
+    }
+    next();
+});
+
 // Request logging middleware
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);

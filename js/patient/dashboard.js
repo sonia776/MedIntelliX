@@ -358,9 +358,22 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ==========================================================
-    // CATEGORY 6: NOTIFICATION API CONTROLLER (EMAIL & SMS)
-    // Developer: Sonia (APIs & External Integrations)
+    // NOTIFICATION API CONTROLLER (EMAIL & SMS)
     // ==========================================================
+
+    const API_BASE = "http://localhost:5000";
+    let currentUserId = "usr_pat_alex_001";
+    try {
+        const savedUserJson = localStorage.getItem("medintellix_user");
+        if (savedUserJson) {
+            const savedUser = JSON.parse(savedUserJson);
+            if (savedUser && savedUser.id) {
+                currentUserId = savedUser.id;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not read saved user:", e);
+    }
 
     const btnTriggerAppt = document.getElementById("btnTriggerApptReminders");
     const btnTriggerRefill = document.getElementById("btnTriggerRefillAlerts");
@@ -396,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!notifListContainer) return;
 
         try {
-            const res = await fetch(`${API_BASE}/api/external/notifications/history?userId=${currentUserId}&limit=20`);
+            const res = await fetch(`${API_BASE}/api/external/notifications/history?userId=${encodeURIComponent(currentUserId)}&limit=20`);
             const data = await res.json();
 
             if (!data.success || !data.notifications || data.notifications.length === 0) {

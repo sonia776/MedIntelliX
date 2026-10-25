@@ -113,14 +113,16 @@ function initializePortalNotifications() {
     }
 
     notificationButton.addEventListener("click", function () {
-        showPortalNotice(
-            "Notifications will be available when the backend is connected.",
-            "info"
-        );
+        const notifSection = document.getElementById("notifications-section");
+        if (notifSection) {
+            notifSection.scrollIntoView({ behavior: "smooth" });
+        } else {
+            window.location.href = "dashboard.html#notifications-section";
+        }
     });
 }
 
-/* ---------- Demo Portal Links ---------- */
+/* ---------- Portal Sign Out ---------- */
 
 function initializePortalLinks() {
     const logoutLink = document.getElementById("logoutLink");
@@ -128,11 +130,9 @@ function initializePortalLinks() {
     if (logoutLink) {
         logoutLink.addEventListener("click", function (event) {
             event.preventDefault();
-
-            showPortalNotice(
-                "Sign-out will be enabled when authentication is implemented.",
-                "info"
-            );
+            localStorage.removeItem("medintellix_token");
+            localStorage.removeItem("medintellix_user");
+            window.location.href = "../login.html";
         });
     }
 }

@@ -10,12 +10,17 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 
-const DATA_DIR = path.join(__dirname, "../../data");
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT);
+const DATA_DIR = isServerless ? path.join("/tmp", "medintellix-data") : path.join(__dirname, "../../data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
 
-// Ensure local data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+// Safely ensure local data directory exists without crashing on read-only filesystems
+try {
+    if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+} catch (e) {
+    console.warn("[Database] Read-only filesystem detected, using in-memory fallback:", e.message);
 }
 
 // Global PostgreSQL Pool
@@ -187,26 +192,50 @@ function getInitialSeedData() {
     };
 }
 
+let inMemoryStore = null;
+
 // Local fallback store
 function loadLocalDb() {
+    if (inMemoryStore) {
+        return inMemoryStore;
+    }
+
     try {
         if (!fs.existsSync(DB_FILE)) {
             const seed = getInitialSeedData();
-            fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), "utf8");
-            return seed;
+            try {
+                if (!fs.existsSync(DATA_DIR)) {
+                    fs.mkdirSync(DATA_DIR, { recursive: true });
+                }
+                fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), "utf8");
+            } catch (writeErr) {
+                // Ignore write failures in read-only environments
+            }
+            inMemoryStore = seed;
+            return inMemoryStore;
         }
         const raw = fs.readFileSync(DB_FILE, "utf8");
-        return JSON.parse(raw);
+        inMemoryStore = JSON.parse(raw);
+        return inMemoryStore;
     } catch (err) {
-        console.error("[Database] Error reading local db, reverting to seed:", err.message);
-        const seed = getInitialSeedData();
-        fs.writeFileSync(DB_FILE, JSON.stringify(seed, null, 2), "utf8");
-        return seed;
+        console.warn("[Database] Error reading local db, reverting to in-memory seed:", err.message);
+        if (!inMemoryStore) {
+            inMemoryStore = getInitialSeedData();
+        }
+        return inMemoryStore;
     }
 }
 
 function saveLocalDb(data) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
+    inMemoryStore = data;
+    try {
+        if (!fs.existsSync(DATA_DIR)) {
+            fs.mkdirSync(DATA_DIR, { recursive: true });
+        }
+        fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
+    } catch (err) {
+        // Read-only filesystem (e.g. Vercel serverless), in-memory cache preserves data during execution
+    }
 }
 
 const db = {

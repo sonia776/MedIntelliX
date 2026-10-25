@@ -89,7 +89,7 @@ function getInitials(fullName) {
 
 function initializeDashboardStatistics() {
     const token = localStorage.getItem("medintellix_token");
-    const API_BASE = "http://localhost:5000";
+    const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:5000" : "";
 
     // If authenticated, fetch live stats from Sonia's backend
     if (token) {
@@ -157,7 +157,7 @@ function updateStatistic(elementId, value) {
    ========================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
-    const API_BASE = "http://localhost:5000";
+    const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:5000" : "";
 
     // 1. SYMPTOM TRIAGE CONTROLLER
     const symptomsInput = document.getElementById("aiSymptomsInput");

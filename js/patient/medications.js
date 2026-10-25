@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
        CATEGORY 6: APIS & EXTERNAL INTEGRATIONS (DEVELOPER: SONIA)
        OpenFDA Drug Database & ClinicalTrials.gov Integration
        ========================================================== */
-    const API_BASE = "http://localhost:5000";
+    const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:5000" : "";
 
     // 1. OPENFDA DRUG SEARCH
     const fdaInput = document.getElementById("fdaDrugSearchInput");

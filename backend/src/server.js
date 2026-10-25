@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 // Root API Health & Documentation Endpoint
-app.get("/", (req, res) => {
+const apiDocsHandler = (req, res) => {
     res.json({
         platform: "MedIntelliX Healthcare AI API",
         version: "1.0.0",
@@ -79,7 +79,11 @@ app.get("/", (req, res) => {
         },
         timestamp: new Date().toISOString()
     });
-});
+};
+
+app.get("/", apiDocsHandler);
+app.get("/api", apiDocsHandler);
+app.get("/api/health", apiDocsHandler);
 
 // Mount Routes
 app.use("/api/auth", authRoutes);
@@ -99,15 +103,28 @@ app.use((req, res) => {
 // Global Error Handler
 app.use(errorHandler);
 
-// Start Server
-app.listen(PORT, async () => {
-    await db.testConnection();
-    console.log(`
+// Start Server locally if run directly
+const isDirectExecution = require.main === module;
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+if (isDirectExecution && !isServerless) {
+    app.listen(PORT, async () => {
+        try {
+            await db.testConnection();
+        } catch (e) {
+            console.warn("Database initialization notice:", e.message);
+        }
+        console.log(`
 =============================================================
  🚀 MedIntelliX Server is running on port ${PORT}
  📡 API Base URL: http://localhost:${PORT}/
  🔐 Authentication & RBAC Active
  💻 Lead Backend Developer: Sonia
 =============================================================
-    `);
-});
+        `);
+    });
+}
+
+// Export Express app for Vercel Serverless Functions & testing
+module.exports = app;
+

@@ -8,6 +8,7 @@ const express = require("express");
 const router = express.Router();
 const openfdaService = require("../services/openfda.service");
 const clinicaltrialsService = require("../services/clinicaltrials.service");
+const llmService = require("../services/llm.service");
 
 /**
  * @route   GET /api/external/overview
@@ -20,6 +21,14 @@ router.get("/overview", (req, res) => {
         category: "Category 6: APIs & External Integrations",
         developer: "Sonia",
         integrations: {
+            aiMedicalAssistant: {
+                provider: "Google Gemini LLM / MedIntelliX Clinical Reasoning Engine",
+                capabilities: ["Clinical Symptom Triage", "Diagnostic Lab Report Explainer", "Emergency Red-Flag Detection"],
+                endpoints: [
+                    "POST /api/external/ai/symptom-triage",
+                    "POST /api/external/ai/explain-report"
+                ]
+            },
             drugDatabase: {
                 provider: "OpenFDA (U.S. Food & Drug Administration)",
                 capabilities: ["Drug Label Lookup", "Dosage & Warnings", "Adverse Reactions", "Harmful Interaction Checking"],
@@ -37,6 +46,50 @@ router.get("/overview", (req, res) => {
             }
         }
     });
+});
+
+/**
+ * @route   POST /api/external/ai/symptom-triage
+ * @desc    Analyze patient symptoms and return clinical triage guidance
+ * @access  Public
+ */
+router.post("/ai/symptom-triage", async (req, res, next) => {
+    try {
+        const { symptoms, patientContext } = req.body;
+        if (!symptoms) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide 'symptoms' in the request body."
+            });
+        }
+
+        const result = await llmService.analyzeSymptoms(symptoms, patientContext || {});
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @route   POST /api/external/ai/explain-report
+ * @desc    Explain medical laboratory report in patient-friendly terms
+ * @access  Public
+ */
+router.post("/ai/explain-report", async (req, res, next) => {
+    try {
+        const { reportText, testType } = req.body;
+        if (!reportText) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide 'reportText' in the request body."
+            });
+        }
+
+        const result = await llmService.explainLabReport(reportText, testType || "General Lab Report");
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**

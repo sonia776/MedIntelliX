@@ -491,6 +491,102 @@
                 </div>
 
 
+                <!-- ==========================================================
+                     CATEGORY 6: AI MEDICAL HEALTH ASSISTANT (LLM API)
+                     Developer: Sonia (APIs & External Integrations)
+                     ========================================================== -->
+                <section class="dashboard-panel ai-assistant-panel mb-4 p-4 rounded-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%); border-left: 5px solid #0d9488 !important;">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-grid place-items-center text-white" style="width: 48px; height: 48px; background: #0d9488; font-size: 22px;">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div>
+                                <span class="badge text-white px-2 py-1 rounded-pill" style="background: #0d9488; font-size: 11px;">
+                                    <i class="bi bi-stars me-1"></i> CATEGORY 6 • LLM APIS (SONIA)
+                                </span>
+                                <h3 class="h5 fw-bold mb-0 text-dark mt-1">MedIntelliX AI Clinical Health Assistant</h3>
+                                <small class="text-muted">Powered by Google Gemini LLM API &amp; Clinical Reasoning Engine</small>
+                            </div>
+                        </div>
+                        <ul class="nav nav-pills gap-1" id="aiAssistantTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-pill px-3 py-1 small fw-semibold" id="tab-ai-symptoms" data-bs-toggle="pill" data-bs-target="#pane-ai-symptoms" type="button" role="tab">
+                                    <i class="bi bi-clipboard2-pulse me-1"></i> Symptom Triage
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill px-3 py-1 small fw-semibold" id="tab-ai-reports" data-bs-toggle="pill" data-bs-target="#pane-ai-reports" type="button" role="tab">
+                                    <i class="bi bi-file-earmark-medical me-1"></i> Lab Report Explainer
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="aiAssistantTabsContent">
+                        <!-- PANE 1: SYMPTOM TRIAGE -->
+                        <div class="tab-pane fade show active" id="pane-ai-symptoms" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <label class="form-label fw-semibold small text-secondary">Describe your symptoms or what you are experiencing:</label>
+                                    <div class="input-group mb-2">
+                                        <textarea id="aiSymptomsInput" class="form-control" rows="3" placeholder="e.g., I have had a dry cough, low-grade fever (100.5°F), and fatigue for 2 days..."></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div class="d-flex gap-1 flex-wrap align-items-center">
+                                            <span class="small text-muted me-1" style="font-size: 11px;">Quick examples:</span>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="I have a mild fever of 100.5F, sore throat, and dry cough for 2 days">Fever &amp; Cough</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="Severe crushing chest pain radiating to left arm with shortness of breath and sweating">Chest Pain (Red Flag)</button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="Epigastric burning stomach pain after meals and nausea for 3 days">Stomach Acidity</button>
+                                        </div>
+                                        <button class="btn btn-primary px-3 py-2 fw-semibold" id="btnAnalyzeSymptoms" style="background-color: #0d9488; border-color: #0d9488;">
+                                            <i class="bi bi-stars me-1"></i> Consult AI
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div id="aiSymptomsResult" class="h-100 p-3 bg-white rounded-3 border" style="min-height: 180px;">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-chat-heart text-teal fs-3" style="color: #0d9488;"></i>
+                                            <p class="small mb-0 mt-2">Enter symptoms or pick an example above to see clinical AI triage, potential conditions, and doctor recommendations.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANE 2: LAB REPORT EXPLAINER -->
+                        <div class="tab-pane fade" id="pane-ai-reports" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <label class="form-label fw-semibold small text-secondary">Paste lab report findings or numerical test results:</label>
+                                    <div class="input-group mb-2">
+                                        <textarea id="aiReportInput" class="form-control" rows="3" placeholder="e.g., Fasting Blood Sugar: 148 mg/dL, HbA1c: 7.2%, Serum Creatinine: 1.1 mg/dL..."></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div class="d-flex gap-1 flex-wrap align-items-center">
+                                            <span class="small text-muted me-1" style="font-size: 11px;">Examples:</span>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-report" data-report="HbA1c is 7.4% and Fasting Blood Sugar is 152 mg/dL">Diabetes (HbA1c 7.4%)</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-report" data-report="Total Cholesterol: 245 mg/dL, LDL: 158 mg/dL, HDL: 38 mg/dL, Triglycerides: 210 mg/dL">Lipid Panel (High Cholesterol)</button>
+                                        </div>
+                                        <button class="btn btn-primary px-3 py-2 fw-semibold" id="btnExplainReport" style="background-color: #0d9488; border-color: #0d9488;">
+                                            <i class="bi bi-file-earmark-medical me-1"></i> Explain Report
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div id="aiReportResult" class="h-100 p-3 bg-white rounded-3 border" style="min-height: 180px;">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-file-earmark-text text-teal fs-3" style="color: #0d9488;"></i>
+                                            <p class="small mb-0 mt-2">Paste lab test values to receive plain-language explanations, clinical meaning, and dietary advice.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Health Information Panel -->
                 <section class="health-info-panel">
 

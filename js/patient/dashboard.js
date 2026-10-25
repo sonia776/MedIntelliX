@@ -356,5 +356,267 @@ document.addEventListener("DOMContentLoaded", function () {
             explainLabReport(btn.dataset.report);
         });
     });
+
+    // ==========================================================
+    // CATEGORY 6: NOTIFICATION API CONTROLLER (EMAIL & SMS)
+    // Developer: Sonia (APIs & External Integrations)
+    // ==========================================================
+
+    const btnTriggerAppt = document.getElementById("btnTriggerApptReminders");
+    const btnTriggerRefill = document.getElementById("btnTriggerRefillAlerts");
+    const btnRefreshNotifs = document.getElementById("btnRefreshNotifs");
+    const notifListContainer = document.getElementById("notificationHistoryList");
+    const notifCountBadge = document.getElementById("notifCountBadge");
+    const sidebarNotifBadge = document.getElementById("sidebarNotifBadge");
+    const alertBanner = document.getElementById("notificationAlertBanner");
+    const alertMsg = document.getElementById("notificationAlertMsg");
+    const btnDispatchCustom = document.getElementById("btnDispatchCustomNotif");
+    const topbarNotifBtn = document.getElementById("notificationButton");
+
+    if (topbarNotifBtn) {
+        topbarNotifBtn.addEventListener("click", () => {
+            const section = document.getElementById("notifications-section");
+            if (section) {
+                section.scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    }
+
+    function showBannerAlert(message, type = "success") {
+        if (!alertBanner || !alertMsg) return;
+        alertBanner.className = `alert alert-${type} alert-dismissible fade show mb-3`;
+        alertMsg.innerHTML = message;
+        alertBanner.classList.remove("d-none");
+        setTimeout(() => {
+            alertBanner.classList.add("d-none");
+        }, 6000);
+    }
+
+    async function loadNotificationHistory() {
+        if (!notifListContainer) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/api/external/notifications/history?userId=${currentUserId}&limit=20`);
+            const data = await res.json();
+
+            if (!data.success || !data.notifications || data.notifications.length === 0) {
+                notifListContainer.innerHTML = `
+                    <div class="text-center py-4 text-muted small">
+                        <i class="bi bi-bell-slash text-secondary fs-4 d-block mb-1"></i>
+                        No notification logs recorded yet. Use the triggers above to dispatch test reminders!
+                    </div>
+                `;
+                if (notifCountBadge) notifCountBadge.textContent = "0 Logged";
+                if (sidebarNotifBadge) sidebarNotifBadge.textContent = "0";
+                return;
+            }
+
+            const notifs = data.notifications;
+            if (notifCountBadge) notifCountBadge.textContent = `${notifs.length} Logged (PostgreSQL)`;
+            if (sidebarNotifBadge) sidebarNotifBadge.textContent = notifs.length;
+
+            notifListContainer.innerHTML = notifs.map(n => {
+                let channelBadge = `<span class="badge bg-secondary-subtle text-secondary border">${n.channel}</span>`;
+                if (n.channel === "EMAIL") {
+                    channelBadge = `<span class="badge bg-info-subtle text-info border"><i class="bi bi-envelope me-1"></i>EMAIL</span>`;
+                } else if (n.channel === "SMS") {
+                    channelBadge = `<span class="badge bg-warning-subtle text-warning-emphasis border"><i class="bi bi-chat-dots me-1"></i>SMS</span>`;
+                } else if (n.channel === "MULTI") {
+                    channelBadge = `<span class="badge bg-primary-subtle text-primary border"><i class="bi bi-broadcast me-1"></i>EMAIL + SMS</span>`;
+                }
+
+                let typeIcon = "bi-bell";
+                if (n.type === "APPOINTMENT_REMINDER") typeIcon = "bi-calendar-check text-primary";
+                else if (n.type === "MEDICATION_REFILL") typeIcon = "bi-capsule-pill text-warning";
+                else typeIcon = "bi-info-circle text-info";
+
+                const dateStr = n.created_at ? new Date(n.created_at).toLocaleString() : "Recent";
+                const meta = typeof n.metadata === "string" ? JSON.parse(n.metadata || "{}") : (n.metadata || {});
+
+                return `
+                    <div class="p-2 mb-2 rounded bg-light border border-light-subtle small transition">
+                        <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-1">
+                            <span class="fw-bold text-dark d-flex align-items-center">
+                                <i class="bi ${typeIcon} me-1 fs-6"></i> ${n.title}
+                            </span>
+                            <div class="d-flex gap-1 align-items-center">
+                                ${channelBadge}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 10px;">
+                                    <i class="bi bi-check-circle-fill me-1"></i>${n.status}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mb-1 text-secondary" style="font-size: 12px;">${n.message}</p>
+                        <div class="d-flex justify-content-between align-items-center text-muted flex-wrap gap-1" style="font-size: 11px;">
+                            <span><i class="bi bi-person-check me-1"></i>${n.recipient_email || n.recipient_phone || "Alex Morgan"}</span>
+                            <span><i class="bi bi-clock me-1"></i>${dateStr}</span>
+                        </div>
+                        ${meta.smsDispatchId || meta.emailMessageId ? `
+                            <div class="mt-1 pt-1 border-top text-muted font-monospace" style="font-size: 10px;">
+                                ${meta.smsDispatchId ? `<span class="me-2">SMS Ref: <strong>${meta.smsDispatchId}</strong></span>` : ""}
+                                ${meta.emailMessageId ? `<span>Email ID: ${meta.emailMessageId.substring(0, 22)}...</span>` : ""}
+                            </div>
+                        ` : ""}
+                    </div>
+                `;
+            }).join("");
+
+        } catch (err) {
+            console.error("Error loading notification history:", err);
+            notifListContainer.innerHTML = `
+                <div class="alert alert-danger py-2 small">
+                    <i class="bi bi-x-circle me-1"></i> Could not load notifications from backend.
+                </div>
+            `;
+        }
+    }
+
+    // Trigger Appointment Reminders
+    if (btnTriggerAppt) {
+        btnTriggerAppt.addEventListener("click", async () => {
+            btnTriggerAppt.disabled = true;
+            btnTriggerAppt.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> Scanning...`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/external/notifications/trigger-appointment-reminders`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showBannerAlert(`<strong><i class="bi bi-check2-circle me-1"></i> Success!</strong> Dispatched 24h-48h appointment reminders via Email &amp; SMS for <strong>${data.count} scheduled consultation(s)</strong>.`);
+                    loadNotificationHistory();
+                } else {
+                    showBannerAlert("Failed to trigger appointment reminders.", "warning");
+                }
+            } catch (err) {
+                showBannerAlert("Error connecting to notification service.", "danger");
+            } finally {
+                btnTriggerAppt.disabled = false;
+                btnTriggerAppt.innerHTML = `<i class="bi bi-calendar2-check me-1"></i> Trigger 24h Appt Reminders`;
+            }
+        });
+    }
+
+    // Trigger Medication Refill Alerts
+    if (btnTriggerRefill) {
+        btnTriggerRefill.addEventListener("click", async () => {
+            btnTriggerRefill.disabled = true;
+            btnTriggerRefill.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> Checking...`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/external/notifications/trigger-refill-alerts`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ daysThreshold: 60 })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showBannerAlert(`<strong><i class="bi bi-capsule-pill me-1"></i> Refill Warnings Dispatched!</strong> Sent low-stock and renewal warnings via Email &amp; SMS for <strong>${data.count} active prescription(s)</strong>.`);
+                    loadNotificationHistory();
+                } else {
+                    showBannerAlert("Failed to trigger refill alerts.", "warning");
+                }
+            } catch (err) {
+                showBannerAlert("Error connecting to notification service.", "danger");
+            } finally {
+                btnTriggerRefill.disabled = false;
+                btnTriggerRefill.innerHTML = `<i class="bi bi-capsule-pill me-1"></i> Trigger Medicine Refill Alerts`;
+            }
+        });
+    }
+
+    // Refresh Button
+    if (btnRefreshNotifs) {
+        btnRefreshNotifs.addEventListener("click", () => {
+            loadNotificationHistory();
+        });
+    }
+
+    // On-Demand Direct Dispatch
+    if (btnDispatchCustom) {
+        btnDispatchCustom.addEventListener("click", async () => {
+            const email = document.getElementById("notifRecipientEmail")?.value || "alex@medintellix.com";
+            const phone = document.getElementById("notifRecipientPhone")?.value || "+1-555-0199";
+            const template = document.getElementById("notifTemplateSelect")?.value || "appt";
+            const channelEmail = document.getElementById("channelEmail")?.checked;
+            const channelSms = document.getElementById("channelSms")?.checked;
+
+            const channels = [];
+            if (channelEmail) channels.push("EMAIL");
+            if (channelSms) channels.push("SMS");
+
+            if (channels.length === 0) {
+                alert("Please select at least one channel (Email or SMS).");
+                return;
+            }
+
+            let title = "MedIntelliX Clinical Update";
+            let message = "Your healthcare provider has shared an update regarding your care plan.";
+            let type = "SYSTEM_ALERT";
+
+            if (template === "appt") {
+                type = "APPOINTMENT_REMINDER";
+                title = "Appointment Reminder: Dr. Rachel Green";
+                message = "Your clinical consultation is confirmed for tomorrow at 10:30 AM at City Central Hospital. Please bring prior records.";
+            } else if (template === "refill") {
+                type = "MEDICATION_REFILL";
+                title = "Rx Refill Alert: Atorvastatin (20mg)";
+                message = "Your Atorvastatin supply has 5 days remaining. Please reorder prescription via MedIntelliX or contact your pharmacy.";
+            } else if (template === "report") {
+                type = "SYSTEM_ALERT";
+                title = "Diagnostic Lab Report Ready";
+                message = "Your Complete Blood Count & Lipid Panel report is now verified and available for review in your Patient Portal.";
+            }
+
+            btnDispatchCustom.disabled = true;
+            btnDispatchCustom.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Dispatching...`;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/external/notifications/send`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        type,
+                        channels,
+                        title,
+                        message,
+                        recipientEmail: email,
+                        recipientPhone: phone
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    const resultBox = document.getElementById("dispatchLiveResult");
+                    const resultDetails = document.getElementById("dispatchLiveResultDetails");
+                    if (resultBox && resultDetails) {
+                        resultBox.classList.remove("d-none");
+                        resultDetails.innerHTML = `
+                            <div><strong>Recipient:</strong> ${email} · ${phone}</div>
+                            <div><strong>Channels:</strong> ${channels.join(" + ")}</div>
+                            <div><strong>Delivery Status:</strong> <span class="badge bg-success">DELIVERED</span></div>
+                            <div><strong>Database ID:</strong> ${data.notification.id}</div>
+                        `;
+                    }
+                    showBannerAlert(`<strong><i class="bi bi-broadcast me-1"></i> Dispatched!</strong> Sent ${title} via ${channels.join(" &amp; ")}.`);
+                    loadNotificationHistory();
+                }
+            } catch (err) {
+                showBannerAlert("Failed to dispatch custom notification.", "danger");
+            } finally {
+                btnDispatchCustom.disabled = false;
+                btnDispatchCustom.innerHTML = `<i class="bi bi-broadcast me-1"></i> Dispatch Multi-Channel Notification`;
+            }
+        });
+    }
+
+    // Initial load of notification history
+    loadNotificationHistory();
 });
+
 

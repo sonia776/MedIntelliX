@@ -9,6 +9,7 @@ const router = express.Router();
 const openfdaService = require("../services/openfda.service");
 const clinicaltrialsService = require("../services/clinicaltrials.service");
 const llmService = require("../services/llm.service");
+const notificationService = require("../services/notification.service");
 
 /**
  * @route   GET /api/external/overview
@@ -42,6 +43,21 @@ router.get("/overview", (req, res) => {
                 capabilities: ["Live Clinical Trials Search", "Patient Recruitment Matching", "Interventions & Phases"],
                 endpoints: [
                     "GET /api/external/trials/search?condition=diabetes&status=RECRUITING"
+                ]
+            },
+            notifications: {
+                channels: ["Transactional Email (Nodemailer / SMTP)", "Cellular SMS (Telecom Gateway)", "In-App Push"],
+                capabilities: [
+                    "Automated 24h-48h Clinical Appointment Reminders",
+                    "Proactive Medication Refill Low-Stock Warnings",
+                    "Custom Multi-Channel Clinical Direct Dispatch",
+                    "PostgreSQL Audit Logging & Delivery Tracking"
+                ],
+                endpoints: [
+                    "POST /api/external/notifications/trigger-appointment-reminders",
+                    "POST /api/external/notifications/trigger-refill-alerts",
+                    "POST /api/external/notifications/send",
+                    "GET /api/external/notifications/history?userId=usr_pat_alex_001"
                 ]
             }
         }
@@ -157,4 +173,96 @@ router.get("/trials/search", async (req, res, next) => {
     }
 });
 
+/**
+ * ==========================================================
+ * NOTIFICATION APIS (Category 6: APIs & External Integrations)
+ * Developer: Sonia
+ * ==========================================================
+ */
+
+/**
+ * @route   POST /api/external/notifications/trigger-appointment-reminders
+ * @desc    Scan and trigger automated 24-48h appointment reminders via Email + SMS
+ * @access  Public / System
+ */
+router.post("/notifications/trigger-appointment-reminders", async (req, res, next) => {
+    try {
+        const result = await notificationService.triggerAppointmentReminders(req.body || {});
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @route   POST /api/external/notifications/trigger-refill-alerts
+ * @desc    Scan and trigger automated medication refill alerts via Email + SMS
+ * @access  Public / System
+ */
+router.post("/notifications/trigger-refill-alerts", async (req, res, next) => {
+    try {
+        const daysThreshold = req.body.daysThreshold ? parseInt(req.body.daysThreshold, 10) : 30;
+        const result = await notificationService.triggerRefillAlerts(daysThreshold);
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @route   POST /api/external/notifications/send
+ * @desc    Send on-demand clinical notification (Email, SMS, or Multi-channel)
+ * @access  Public / Authenticated
+ */
+router.post("/notifications/send", async (req, res, next) => {
+    try {
+        const { userId, type, channels, title, message, recipientEmail, recipientPhone, metadata } = req.body;
+
+        if (!title || !message) {
+            return res.status(400).json({
+                success: false,
+                message: "'title' and 'message' are required fields."
+            });
+        }
+
+        const result = await notificationService.sendManualNotification({
+            userId,
+            type: type || "SYSTEM_ALERT",
+            channels: channels || ["EMAIL", "SMS"],
+            title,
+            message,
+            recipientEmail,
+            recipientPhone,
+            metadata: metadata || {}
+        });
+
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @route   GET /api/external/notifications/history
+ * @desc    Retrieve notification logs & delivery status for a user
+ * @access  Public / Authenticated
+ */
+router.get("/notifications/history", async (req, res, next) => {
+    try {
+        const userId = req.query.userId || req.user?.id || "usr_pat_alex_001";
+        const limit = req.query.limit ? parseInt(req.query.limit, 10) : 20;
+
+        const notifications = await notificationService.getNotifications(userId, limit);
+        res.status(200).json({
+            success: true,
+            userId,
+            count: notifications.length,
+            notifications
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;
+

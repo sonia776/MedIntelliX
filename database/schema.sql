@@ -125,3 +125,25 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
+
+-- 8. NOTIFICATIONS & ALERTS (Email, SMS, Refill Alerts, Appointment Reminders)
+-- Category 6: APIs & External Integrations (Developer: Sonia)
+CREATE TABLE IF NOT EXISTS notifications (
+    id VARCHAR(50) PRIMARY KEY,
+    user_id VARCHAR(50) REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL CHECK (type IN ('APPOINTMENT_REMINDER', 'MEDICATION_REFILL', 'APPOINTMENT_CONFIRMED', 'SYSTEM_ALERT')),
+    channel VARCHAR(30) NOT NULL CHECK (channel IN ('EMAIL', 'SMS', 'MULTI', 'IN_APP')),
+    recipient_email VARCHAR(255),
+    recipient_phone VARCHAR(50),
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'SENT' CHECK (status IN ('SENT', 'DELIVERED', 'FAILED', 'SCHEDULED')),
+    metadata JSONB,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
+CREATE INDEX IF NOT EXISTS idx_notifications_created ON notifications(created_at DESC);
+

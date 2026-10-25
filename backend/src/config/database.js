@@ -182,7 +182,8 @@ function getInitialSeedData() {
                 ai_insights: "Normal chest radiograph, no signs of acute pulmonary infection."
             }
         ],
-        audit_logs: []
+        audit_logs: [],
+        notifications: []
     };
 }
 
@@ -586,6 +587,179 @@ const db = {
         } catch (e) {
             console.error("Audit log error:", e.message);
         }
+    },
+
+    // ==========================================================
+    // NOTIFICATIONS & ALERTS (Category 6: APIs & External Integrations)
+    // Developer: Sonia
+    // ==========================================================
+
+    async createNotification(notifData) {
+        const id = notifData.id || "notif_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+        const record = {
+            id,
+            user_id: notifData.user_id,
+            type: notifData.type,
+            channel: notifData.channel,
+            recipient_email: notifData.recipient_email || null,
+            recipient_phone: notifData.recipient_phone || null,
+            title: notifData.title,
+            message: notifData.message,
+            status: notifData.status || "SENT",
+            metadata: notifData.metadata || {},
+            is_read: false,
+            created_at: new Date().toISOString()
+        };
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                await pool.query(
+                    `INSERT INTO notifications (id, user_id, type, channel, recipient_email, recipient_phone, title, message, status, metadata, is_read, created_at)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+                    [
+                        record.id,
+                        record.user_id,
+                        record.type,
+                        record.channel,
+                        record.recipient_email,
+                        record.recipient_phone,
+                        record.title,
+                        record.message,
+                        record.status,
+                        JSON.stringify(record.metadata),
+                        record.is_read,
+                        record.created_at
+                    ]
+                );
+                return record;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - createNotification]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        if (!store.notifications) store.notifications = [];
+        store.notifications.unshift(record);
+        if (store.notifications.length > 500) store.notifications.pop();
+        saveLocalDb(store);
+        return record;
+    },
+
+    async getNotifications(userId, limit = 20) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query(
+                    `SELECT * FROM notifications 
+                     WHERE user_id = $1 OR user_id IS NULL 
+                     ORDER BY created_at DESC LIMIT $2`,
+                    [userId, limit]
+                );
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getNotifications]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        if (!store.notifications) store.notifications = [];
+        return store.notifications
+            .filter((n) => !n.user_id || n.user_id === userId)
+            .slice(0, limit);
+    },
+
+    async markNotificationAsRead(id, userId) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query(
+                    `UPDATE notifications SET is_read = TRUE 
+                     WHERE id = $1 AND (user_id = $2 OR user_id IS NULL) 
+                     RETURNING *`,
+                    [id, userId]
+                );
+                return res.rows[0];
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - markNotificationAsRead]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        if (!store.notifications) store.notifications = [];
+        const notif = store.notifications.find((n) => n.id === id && (!n.user_id || n.user_id === userId));
+        if (notif) {
+            notif.is_read = true;
+            saveLocalDb(store);
+        }
+        return notif;
+    },
+
+    async getUpcomingAppointmentsWithUsers() {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const res = await pool.query(`
+                    SELECT a.*, u.full_name as patient_full_name, u.email as patient_email, u.phone as patient_phone
+                    FROM appointments a
+                    JOIN users u ON a.patient_id = u.id
+                    WHERE a.status IN ('Confirmed', 'Scheduled')
+                    ORDER BY a.appointment_date ASC
+                `);
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getUpcomingAppointmentsWithUsers]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        return store.appointments
+            .filter((a) => a.status === "Confirmed" || a.status === "Scheduled")
+            .map((a) => {
+                const u = store.users.find((user) => user.id === a.patient_id);
+                return {
+                    ...a,
+                    patient_full_name: u ? u.full_name : a.patient_name,
+                    patient_email: u ? u.email : "patient@medintellix.com",
+                    patient_phone: u ? u.phone : "+1-555-0199"
+                };
+            });
+    },
+
+    async getActiveMedicationsWithUsers(userId = null) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                let query = `
+                    SELECT m.*, u.full_name as patient_full_name, u.email as patient_email, u.phone as patient_phone
+                    FROM medications m
+                    JOIN users u ON m.patient_id = u.id
+                    WHERE m.status = 'Active'
+                `;
+                const params = [];
+                if (userId) {
+                    query += ` AND m.patient_id = $1`;
+                    params.push(userId);
+                }
+                const res = await pool.query(query, params);
+                return res.rows;
+            } catch (e) {
+                console.warn("[PostgreSQL Fallback - getActiveMedicationsWithUsers]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        return store.medications
+            .filter((m) => m.status === "Active" && (!userId || m.patient_id === userId))
+            .map((m) => {
+                const u = store.users.find((user) => user.id === m.patient_id);
+                return {
+                    ...m,
+                    patient_full_name: u ? u.full_name : "Alex Morgan",
+                    patient_email: u ? u.email : "alex@medintellix.com",
+                    patient_phone: u ? u.phone : "+1-555-0199"
+                };
+            });
     }
 };
 

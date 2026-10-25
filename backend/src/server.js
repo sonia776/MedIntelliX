@@ -92,7 +92,7 @@ const apiDocsHandler = (req, res) => {
     });
 };
 
-app.get("/", apiDocsHandler);
+app.get("/", (req, res) => res.redirect("/index.html"));
 app.get("/api", apiDocsHandler);
 app.get("/api/health", apiDocsHandler);
 

@@ -54,21 +54,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static frontend assets (HTML, CSS, JS, Images)
-const publicDir = path.join(__dirname, "../public");
-const rootDir = path.join(__dirname, "../../");
-
-let staticDir = null;
-if (fs.existsSync(path.join(publicDir, "index.html"))) {
-    staticDir = publicDir;
-} else if (fs.existsSync(path.join(rootDir, "index.html"))) {
-    staticDir = rootDir;
-}
-
-if (staticDir) {
-    app.use(express.static(staticDir));
-}
-
 // Root API Health & Documentation Endpoint
 const apiDocsHandler = (req, res) => {
     res.json({
@@ -107,19 +92,7 @@ const apiDocsHandler = (req, res) => {
     });
 };
 
-// Root Route: Serve MedIntelliX Landing Page to users, or JSON to API callers
-app.get("/", (req, res) => {
-    const isPureJsonRequest = req.headers.accept && req.headers.accept.includes("application/json") && !req.headers.accept.includes("text/html");
-    if (isPureJsonRequest) {
-        return apiDocsHandler(req, res);
-    }
-    if (staticDir && fs.existsSync(path.join(staticDir, "index.html"))) {
-        return res.sendFile(path.join(staticDir, "index.html"));
-    }
-    return apiDocsHandler(req, res);
-});
-
-// Dedicated API Health & Documentation Endpoints
+app.get("/", apiDocsHandler);
 app.get("/api", apiDocsHandler);
 app.get("/api/health", apiDocsHandler);
 
@@ -130,14 +103,8 @@ app.use("/api/hospital", hospitalRoutes);
 app.use("/api/government", governmentRoutes);
 app.use("/api/external", externalRoutes);
 
-// 404 Handler for undefined API routes or missing pages
+// 404 Handler for undefined API routes
 app.use((req, res) => {
-    if (staticDir && req.accepts("html")) {
-        const potentialFile = path.join(staticDir, req.path.endsWith(".html") ? req.path : `${req.path}.html`);
-        if (fs.existsSync(potentialFile)) {
-            return res.sendFile(potentialFile);
-        }
-    }
     res.status(404).json({
         success: false,
         message: `Endpoint ${req.originalUrl} not found on MedIntelliX server.`

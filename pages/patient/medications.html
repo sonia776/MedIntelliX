@@ -491,9 +491,139 @@
                     </div>
                 </div>
 
+                <!-- ==========================================================
+                     CATEGORY 6: APIS & EXTERNAL INTEGRATIONS (DEVELOPER: SONIA)
+                     Real-time OpenFDA Drug Database & ClinicalTrials.gov Search
+                     ========================================================== -->
+                <div class="card border-0 shadow-sm rounded-4 mt-5 mb-4 p-4" style="background: #ffffff; border-top: 4px solid #0d9488 !important;">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <span class="badge text-white px-3 py-2 rounded-pill fw-bold" style="background-color: #0d9488; font-size: 11px;">
+                                <i class="bi bi-cpu-fill me-1"></i> CATEGORY 6 • APIS & EXTERNAL INTEGRATIONS (SONIA)
+                            </span>
+                            <h2 class="h4 fw-bold mt-2 mb-1" style="color: #0f172a;">Live Drug Database & Clinical Trials Intelligence</h2>
+                            <p class="text-secondary small mb-0">Connected to official <strong>U.S. FDA OpenFDA Drug Registry</strong> &amp; <strong>National Institutes of Health (ClinicalTrials.gov)</strong> APIs.</p>
+                        </div>
+                        <ul class="nav nav-pills gap-2" id="externalNavTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-pill px-3 py-2 fw-semibold" id="tab-drug-search" data-bs-toggle="pill" data-bs-target="#pane-drug-search" type="button" role="tab">
+                                    <i class="bi bi-search me-1"></i> FDA Drug Lookup
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill px-3 py-2 fw-semibold" id="tab-drug-interaction" data-bs-toggle="pill" data-bs-target="#pane-drug-interaction" type="button" role="tab">
+                                    <i class="bi bi-shield-exclamation me-1"></i> Drug Interaction Checker
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill px-3 py-2 fw-semibold" id="tab-clinical-trials" data-bs-toggle="pill" data-bs-target="#pane-clinical-trials" type="button" role="tab">
+                                    <i class="bi bi-hospital me-1"></i> ClinicalTrials.gov
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content pt-3" id="externalNavTabsContent">
+                        <!-- TAB 1: FDA DRUG SEARCH -->
+                        <div class="tab-pane fade show active" id="pane-drug-search" role="tabpanel">
+                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                <label for="fdaDrugSearchInput" class="form-label fw-bold mb-1">Search Prescription / OTC Medications</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-capsule text-teal"></i></span>
+                                    <input type="text" id="fdaDrugSearchInput" class="form-control" placeholder="Enter medicine name (e.g. Metformin, Atorvastatin, Aspirin, Paracetamol)..." value="Metformin">
+                                    <button class="btn btn-primary" id="btnSearchFdaDrug" type="button" style="background-color: #0d9488; border-color: #0d9488;">
+                                        <i class="bi bi-search me-1"></i> Search OpenFDA
+                                    </button>
+                                </div>
+                                <div class="mt-2 d-flex gap-2 flex-wrap align-items-center">
+                                    <span class="small text-muted">Quick test:</span>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 fda-quick-pill" data-drug="Metformin">Metformin</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 fda-quick-pill" data-drug="Atorvastatin">Atorvastatin</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 fda-quick-pill" data-drug="Aspirin">Aspirin</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 fda-quick-pill" data-drug="Warfarin">Warfarin</button>
+                                </div>
+                            </div>
+                            <div id="fdaDrugSearchResults"></div>
+                        </div>
+
+                        <!-- TAB 2: DRUG INTERACTION CHECKER -->
+                        <div class="tab-pane fade" id="pane-drug-interaction" role="tabpanel">
+                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                <label class="form-label fw-bold mb-2">Check Adverse Interactions Between Two Medications</label>
+                                <div class="row g-2">
+                                    <div class="col-md-5">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-capsule"></i></span>
+                                            <input type="text" id="drugAInput" class="form-control" placeholder="First Medication (e.g. Aspirin)" value="Aspirin">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 text-center align-self-center">
+                                        <span class="fw-bold text-muted">+</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-capsule-pill"></i></span>
+                                            <input type="text" id="drugBInput" class="form-control" placeholder="Second Medication (e.g. Warfarin)" value="Warfarin">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-danger w-100 fw-semibold" id="btnCheckDrugInteraction" type="button">
+                                            <i class="bi bi-shield-check me-1"></i> Check
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex gap-2 flex-wrap align-items-center">
+                                    <span class="small text-muted">Test pairs:</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 pair-quick-btn" data-a="Aspirin" data-b="Warfarin">Aspirin + Warfarin (Severe Bleeding)</button>
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2 pair-quick-btn" data-a="Ibuprofen" data-b="Aspirin">Ibuprofen + Aspirin (GI Risk)</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 pair-quick-btn" data-a="Metformin" data-b="Alcohol">Metformin + Alcohol (Lactic Acidosis)</button>
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill py-0 px-2 pair-quick-btn" data-a="Paracetamol" data-b="Atorvastatin">Paracetamol + Atorvastatin (Compatible)</button>
+                                </div>
+                            </div>
+                            <div id="drugInteractionResult"></div>
+                        </div>
+
+                        <!-- TAB 3: CLINICAL TRIALS FINDER -->
+                        <div class="tab-pane fade" id="pane-clinical-trials" role="tabpanel">
+                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                <label for="clinicalTrialConditionInput" class="form-label fw-bold mb-1">Search Active Clinical Trials (ClinicalTrials.gov)</label>
+                                <div class="row g-2">
+                                    <div class="col-md-7">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="bi bi-heart-pulse"></i></span>
+                                            <input type="text" id="clinicalTrialConditionInput" class="form-control" placeholder="Medical condition (e.g. Diabetes, Cancer, Asthma, Hypertension)..." value="Diabetes">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="clinicalTrialStatusSelect" class="form-select">
+                                            <option value="RECRUITING" selected>Recruiting Participants</option>
+                                            <option value="ACTIVE_NOT_RECRUITING">Active (Not Recruiting)</option>
+                                            <option value="COMPLETED">Completed Studies</option>
+                                            <option value="ALL">All Statuses</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary w-100 fw-semibold" id="btnSearchClinicalTrials" type="button" style="background-color: #0d9488; border-color: #0d9488;">
+                                            <i class="bi bi-search me-1"></i> Find Trials
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex gap-2 flex-wrap align-items-center">
+                                    <span class="small text-muted">Popular conditions:</span>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ct-quick-pill" data-cond="Diabetes">Diabetes</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ct-quick-pill" data-cond="Cardiovascular">Cardiovascular</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ct-quick-pill" data-cond="Asthma">Asthma</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ct-quick-pill" data-cond="Oncology">Oncology / Cancer</button>
+                                </div>
+                            </div>
+                            <div id="clinicalTrialsSearchResults"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <footer class="portal-footer">
                     <span>© <span id="medicationsYear"></span> MedIntelliX</span>
-                    <span>Prototype · No real patient data</span>
+                    <span>Backend &amp; External APIs by Sonia · Connected to Supabase</span>
                 </footer>
 
             </section>

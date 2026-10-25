@@ -19,6 +19,7 @@ const authRoutes = require("./routes/auth.routes");
 const patientRoutes = require("./routes/patient.routes");
 const hospitalRoutes = require("./routes/hospital.routes");
 const governmentRoutes = require("./routes/government.routes");
+const externalRoutes = require("./routes/external.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +63,12 @@ app.get("/", (req, res) => {
                 medications: "GET, POST /api/patient/medications",
                 records: "GET /api/patient/records"
             },
+            externalIntegrations: {
+                overview: "GET /api/external/overview",
+                drugSearch: "GET /api/external/drugs/search?query=metformin",
+                drugInteractions: "GET /api/external/drugs/interactions?drugA=aspirin&drugB=warfarin",
+                clinicalTrials: "GET /api/external/trials/search?condition=diabetes&status=RECRUITING"
+            },
             hospital: {
                 dashboard: "GET /api/hospital/dashboard",
                 patients: "GET /api/hospital/patients"
@@ -79,6 +86,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/hospital", hospitalRoutes);
 app.use("/api/government", governmentRoutes);
+app.use("/api/external", externalRoutes);
 
 // 404 Handler for undefined API routes
 app.use((req, res) => {

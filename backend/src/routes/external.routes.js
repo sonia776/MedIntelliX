@@ -202,7 +202,7 @@ router.post("/notifications/trigger-appointment-reminders", async (req, res, nex
 router.post("/notifications/trigger-refill-alerts", async (req, res, next) => {
     try {
         const daysThreshold = req.body.daysThreshold ? parseInt(req.body.daysThreshold, 10) : 30;
-        const result = await notificationService.triggerRefillAlerts(daysThreshold);
+        const result = await notificationService.triggerRefillAlerts(daysThreshold, req.body.userId || null);
         res.status(200).json(result);
     } catch (err) {
         next(err);
@@ -249,10 +249,20 @@ router.post("/notifications/send", async (req, res, next) => {
  */
 router.get("/notifications/history", async (req, res, next) => {
     try {
-        const userId = req.query.userId || req.user?.id || "usr_pat_alex_001";
+        const userId = req.query.userId || req.user?.id || null;
+        const email = req.query.email || req.user?.email || null;
         const limit = req.query.limit ? parseInt(req.query.limit, 10) : 20;
 
-        const notifications = await notificationService.getNotifications(userId, limit);
+        if (!userId && !email) {
+            return res.status(200).json({
+                success: true,
+                userId: null,
+                count: 0,
+                notifications: []
+            });
+        }
+
+        const notifications = await notificationService.getNotifications(userId, email, limit);
         res.status(200).json({
             success: true,
             userId,

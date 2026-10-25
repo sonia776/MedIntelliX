@@ -10,6 +10,17 @@
 backend/.env
 backend/.env.*
 !backend/.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+*.cer
+id_rsa*
+credentials.json
+serviceAccountKey.json
+client_secret*.json
+
 
 # Node Dependencies
 node_modules/

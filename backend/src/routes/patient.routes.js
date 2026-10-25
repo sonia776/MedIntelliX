@@ -155,4 +155,41 @@ router.get("/records", async (req, res, next) => {
     }
 });
 
+/**
+ * @route   GET /api/patient/profile
+ * @desc    Get patient personal profile details
+ * @access  Private (Patient)
+ */
+router.get("/profile", async (req, res, next) => {
+    try {
+        const data = await db.getPatientProfile(req.user.id);
+        res.status(200).json({
+            success: true,
+            user: data.user,
+            profile: data.profile
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * @route   PUT /api/patient/profile
+ * @desc    Update patient personal profile details
+ * @access  Private (Patient)
+ */
+router.put("/profile", async (req, res, next) => {
+    try {
+        const result = await db.updatePatientProfile(req.user.id, req.body);
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully!",
+            user: result.user,
+            profile: result.profile
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;

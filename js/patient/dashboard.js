@@ -27,7 +27,7 @@ function initializeDashboardYear() {
 /* ---------- Patient Profile ---------- */
 
 function initializePatientProfile() {
-    let patientName = "Alex Morgan";
+    let patientName = "Patient";
 
     // 1. Try reading logged-in user from localStorage
     const savedUserJson = localStorage.getItem("medintellix_user");
@@ -361,18 +361,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // NOTIFICATION API CONTROLLER (EMAIL & SMS)
     // ==========================================================
 
-    let currentUserId = "usr_pat_alex_001";
+    let currentUser = null;
     try {
         const savedUserJson = localStorage.getItem("medintellix_user");
         if (savedUserJson) {
-            const savedUser = JSON.parse(savedUserJson);
-            if (savedUser && savedUser.id) {
-                currentUserId = savedUser.id;
-            }
+            currentUser = JSON.parse(savedUserJson);
         }
     } catch (e) {
         console.warn("Could not read saved user:", e);
     }
+
+    const currentUserId = currentUser ? currentUser.id : null;
+    const currentUserEmail = currentUser ? currentUser.email : null;
+    const currentUserPhone = currentUser ? (currentUser.phone || "") : "";
 
     const btnTriggerAppt = document.getElementById("btnTriggerApptReminders");
     const btnTriggerRefill = document.getElementById("btnTriggerRefillAlerts");
@@ -384,6 +385,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const alertMsg = document.getElementById("notificationAlertMsg");
     const btnDispatchCustom = document.getElementById("btnDispatchCustomNotif");
     const topbarNotifBtn = document.getElementById("notificationButton");
+
+    // Prefill user's email and phone into dispatch inputs
+    const notifEmailInput = document.getElementById("notifRecipientEmail");
+    const notifPhoneInput = document.getElementById("notifRecipientPhone");
+    if (notifEmailInput && currentUserEmail) {
+        notifEmailInput.value = currentUserEmail;
+    }
+    if (notifPhoneInput && currentUserPhone) {
+        notifPhoneInput.value = currentUserPhone;
+    }
 
     if (topbarNotifBtn) {
         topbarNotifBtn.addEventListener("click", () => {
@@ -407,15 +418,32 @@ document.addEventListener("DOMContentLoaded", function () {
     async function loadNotificationHistory() {
         if (!notifListContainer) return;
 
+        if (!currentUserId && !currentUserEmail) {
+            notifListContainer.innerHTML = `
+                <div class="text-center py-4 text-muted small">
+                    <i class="bi bi-bell-slash text-secondary fs-4 d-block mb-1"></i>
+                    No notifications recorded yet for this account.
+                </div>
+            `;
+            if (notifCountBadge) notifCountBadge.textContent = "0 Logged";
+            if (sidebarNotifBadge) sidebarNotifBadge.textContent = "0";
+            return;
+        }
+
         try {
-            const res = await fetch(`${API_BASE}/api/external/notifications/history?userId=${encodeURIComponent(currentUserId)}&limit=20`);
+            const queryParams = new URLSearchParams();
+            if (currentUserId) queryParams.set("userId", currentUserId);
+            if (currentUserEmail) queryParams.set("email", currentUserEmail);
+            queryParams.set("limit", "20");
+
+            const res = await fetch(`${API_BASE}/api/external/notifications/history?${queryParams.toString()}`);
             const data = await res.json();
 
             if (!data.success || !data.notifications || data.notifications.length === 0) {
                 notifListContainer.innerHTML = `
                     <div class="text-center py-4 text-muted small">
                         <i class="bi bi-bell-slash text-secondary fs-4 d-block mb-1"></i>
-                        No notification logs recorded yet. Use the triggers above to dispatch test reminders!
+                        No notifications recorded yet for this account.
                     </div>
                 `;
                 if (notifCountBadge) notifCountBadge.textContent = "0 Logged";
@@ -424,7 +452,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const notifs = data.notifications;
-            if (notifCountBadge) notifCountBadge.textContent = `${notifs.length} Logged (PostgreSQL)`;
+            if (notifCountBadge) notifCountBadge.textContent = `${notifs.length} Logged`;
             if (sidebarNotifBadge) sidebarNotifBadge.textContent = notifs.length;
 
             notifListContainer.innerHTML = notifs.map(n => {
@@ -444,6 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const dateStr = n.created_at ? new Date(n.created_at).toLocaleString() : "Recent";
                 const meta = typeof n.metadata === "string" ? JSON.parse(n.metadata || "{}") : (n.metadata || {});
+                const recipientLabel = n.recipient_email || n.recipient_phone || (currentUser && currentUser.full_name) || "Patient";
 
                 return `
                     <div class="p-2 mb-2 rounded bg-light border border-light-subtle small transition">
@@ -460,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         <p class="mb-1 text-secondary" style="font-size: 12px;">${n.message}</p>
                         <div class="d-flex justify-content-between align-items-center text-muted flex-wrap gap-1" style="font-size: 11px;">
-                            <span><i class="bi bi-person-check me-1"></i>${n.recipient_email || n.recipient_phone || "Alex Morgan"}</span>
+                            <span><i class="bi bi-person-check me-1"></i>${recipientLabel}</span>
                             <span><i class="bi bi-clock me-1"></i>${dateStr}</span>
                         </div>
                         ${meta.smsDispatchId || meta.emailMessageId ? `
@@ -493,12 +522,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 const res = await fetch(`${API_BASE}/api/external/notifications/trigger-appointment-reminders`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({})
+                    body: JSON.stringify({
+                        userId: currentUserId,
+                        email: currentUserEmail,
+                        phone: currentUserPhone
+                    })
                 });
                 const data = await res.json();
 
                 if (data.success) {
-                    showBannerAlert(`<strong><i class="bi bi-check2-circle me-1"></i> Success!</strong> Dispatched 24h-48h appointment reminders via Email &amp; SMS for <strong>${data.count} scheduled consultation(s)</strong>.`);
+                    if (data.count === 0) {
+                        showBannerAlert(`<strong><i class="bi bi-info-circle me-1"></i> Notice:</strong> No upcoming appointments found for your account. You can book an appointment or send a custom notification below.`, "info");
+                    } else {
+                        showBannerAlert(`<strong><i class="bi bi-check2-circle me-1"></i> Success!</strong> Dispatched 24h-48h appointment reminders via Email &amp; SMS for <strong>${data.count} scheduled consultation(s)</strong>.`);
+                    }
                     loadNotificationHistory();
                 } else {
                     showBannerAlert("Failed to trigger appointment reminders.", "warning");
@@ -522,12 +559,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 const res = await fetch(`${API_BASE}/api/external/notifications/trigger-refill-alerts`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ daysThreshold: 60 })
+                    body: JSON.stringify({
+                        daysThreshold: 60,
+                        userId: currentUserId
+                    })
                 });
                 const data = await res.json();
 
                 if (data.success) {
-                    showBannerAlert(`<strong><i class="bi bi-capsule-pill me-1"></i> Refill Warnings Dispatched!</strong> Sent low-stock and renewal warnings via Email &amp; SMS for <strong>${data.count} active prescription(s)</strong>.`);
+                    if (data.count === 0) {
+                        showBannerAlert(`<strong><i class="bi bi-info-circle me-1"></i> Notice:</strong> No active prescriptions requiring refill for your account at this time.`, "info");
+                    } else {
+                        showBannerAlert(`<strong><i class="bi bi-capsule-pill me-1"></i> Refill Warnings Dispatched!</strong> Sent low-stock and renewal warnings via Email &amp; SMS for <strong>${data.count} active prescription(s)</strong>.`);
+                    }
                     loadNotificationHistory();
                 } else {
                     showBannerAlert("Failed to trigger refill alerts.", "warning");
@@ -551,11 +595,16 @@ document.addEventListener("DOMContentLoaded", function () {
     // On-Demand Direct Dispatch
     if (btnDispatchCustom) {
         btnDispatchCustom.addEventListener("click", async () => {
-            const email = document.getElementById("notifRecipientEmail")?.value || "alex@medintellix.com";
-            const phone = document.getElementById("notifRecipientPhone")?.value || "+1-555-0199";
+            const email = (document.getElementById("notifRecipientEmail")?.value || currentUserEmail || "").trim();
+            const phone = (document.getElementById("notifRecipientPhone")?.value || currentUserPhone || "").trim();
             const template = document.getElementById("notifTemplateSelect")?.value || "appt";
             const channelEmail = document.getElementById("channelEmail")?.checked;
             const channelSms = document.getElementById("channelSms")?.checked;
+
+            if (!email && !phone) {
+                alert("Please enter recipient email or mobile number.");
+                return;
+            }
 
             const channels = [];
             if (channelEmail) channels.push("EMAIL");

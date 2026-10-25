@@ -386,13 +386,168 @@ const db = {
             profile,
             statistics: {
                 records: records.length,
-                reports: records.filter((r) => r.category.includes("Report")).length,
+                reports: records.filter((r) => (r.category || "").includes("Report")).length,
                 medications: medications.filter((m) => m.status === "Active").length,
                 appointments: appointments.filter((a) => a.status === "Confirmed" || a.status === "Scheduled").length
             },
             recentAppointments: appointments.slice(0, 5),
             medications: medications.slice(0, 5),
             records: records.slice(0, 5)
+        };
+    },
+
+    async getPatientProfile(userId) {
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                const userRes = await pool.query("SELECT id, full_name, email, role, phone FROM users WHERE id = $1", [userId]);
+                const profRes = await pool.query("SELECT * FROM patient_profiles WHERE user_id = $1", [userId]);
+                return {
+                    user: userRes.rows[0] || null,
+                    profile: profRes.rows[0] || {}
+                };
+            } catch (e) {
+                console.warn("[PostgreSQL Query Fallback - getPatientProfile]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        const user = store.users.find((u) => u.id === userId);
+        const profile = store.patient_profiles.find((p) => p.user_id === userId) || {};
+        return {
+            user: user
+                ? {
+                      id: user.id,
+                      full_name: user.full_name,
+                      email: user.email,
+                      role: user.role,
+                      phone: user.phone || ""
+                  }
+                : null,
+            profile
+        };
+    },
+
+    async updatePatientProfile(userId, data) {
+        const {
+            fullName,
+            phone,
+            dateOfBirth,
+            gender,
+            bloodGroup,
+            emergencyName,
+            relationship,
+            emergencyPhone,
+            address,
+            allergies,
+            chronicConditions
+        } = data;
+
+        if (isPostgresConnected) {
+            try {
+                const pool = getPgPool();
+                if (fullName || phone !== undefined) {
+                    await pool.query(
+                        `UPDATE users 
+                         SET full_name = COALESCE($1, full_name), 
+                             phone = COALESCE($2, phone), 
+                             updated_at = CURRENT_TIMESTAMP 
+                         WHERE id = $3`,
+                        [fullName || null, phone || null, userId]
+                    );
+                }
+
+                await pool.query(
+                    `INSERT INTO patient_profiles 
+                     (id, user_id, date_of_birth, gender, blood_group, emergency_contact_name, emergency_contact_phone, allergies, chronic_conditions) 
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+                     ON CONFLICT (user_id) DO UPDATE SET 
+                         date_of_birth = COALESCE(EXCLUDED.date_of_birth, patient_profiles.date_of_birth),
+                         gender = COALESCE(EXCLUDED.gender, patient_profiles.gender),
+                         blood_group = COALESCE(EXCLUDED.blood_group, patient_profiles.blood_group),
+                         emergency_contact_name = COALESCE(EXCLUDED.emergency_contact_name, patient_profiles.emergency_contact_name),
+                         emergency_contact_phone = COALESCE(EXCLUDED.emergency_contact_phone, patient_profiles.emergency_contact_phone),
+                         allergies = COALESCE(EXCLUDED.allergies, patient_profiles.allergies),
+                         chronic_conditions = COALESCE(EXCLUDED.chronic_conditions, patient_profiles.chronic_conditions)`,
+                    [
+                        `prof_${Date.now()}`,
+                        userId,
+                        dateOfBirth || null,
+                        gender || null,
+                        bloodGroup || null,
+                        emergencyName || null,
+                        emergencyPhone || null,
+                        allergies || null,
+                        chronicConditions || null
+                    ]
+                );
+
+                const userRes = await pool.query("SELECT id, full_name, email, role, phone FROM users WHERE id = $1", [userId]);
+                const profRes = await pool.query("SELECT * FROM patient_profiles WHERE user_id = $1", [userId]);
+                return {
+                    user: userRes.rows[0] || null,
+                    profile: profRes.rows[0] || {}
+                };
+            } catch (e) {
+                console.warn("[PostgreSQL Query Fallback - updatePatientProfile]:", e.message);
+            }
+        }
+
+        const store = loadLocalDb();
+        const userIndex = store.users.findIndex((u) => u.id === userId);
+        if (userIndex !== -1) {
+            if (fullName) store.users[userIndex].full_name = fullName.trim();
+            if (phone !== undefined) store.users[userIndex].phone = phone ? phone.trim() : null;
+        }
+
+        let profIndex = store.patient_profiles.findIndex((p) => p.user_id === userId);
+        if (profIndex === -1) {
+            const newProf = {
+                id: `prof_${Date.now()}`,
+                user_id: userId,
+                date_of_birth: dateOfBirth || null,
+                gender: gender || null,
+                blood_group: bloodGroup || null,
+                emergency_contact_name: emergencyName || null,
+                emergency_contact_phone: emergencyPhone || null,
+                relationship: relationship || null,
+                address: address || null,
+                allergies: allergies || null,
+                chronic_conditions: chronicConditions || null
+            };
+            store.patient_profiles.push(newProf);
+            profIndex = store.patient_profiles.length - 1;
+        } else {
+            const current = store.patient_profiles[profIndex];
+            store.patient_profiles[profIndex] = {
+                ...current,
+                date_of_birth: dateOfBirth !== undefined ? dateOfBirth : current.date_of_birth,
+                gender: gender !== undefined ? gender : current.gender,
+                blood_group: bloodGroup !== undefined ? bloodGroup : current.blood_group,
+                emergency_contact_name: emergencyName !== undefined ? emergencyName : current.emergency_contact_name,
+                emergency_contact_phone: emergencyPhone !== undefined ? emergencyPhone : current.emergency_contact_phone,
+                relationship: relationship !== undefined ? relationship : current.relationship,
+                address: address !== undefined ? address : current.address,
+                allergies: allergies !== undefined ? allergies : current.allergies,
+                chronic_conditions: chronicConditions !== undefined ? chronicConditions : current.chronic_conditions
+            };
+        }
+
+        saveLocalDb(store);
+
+        const updatedUser = store.users.find((u) => u.id === userId);
+        const updatedProfile = store.patient_profiles[profIndex];
+        return {
+            user: updatedUser
+                ? {
+                      id: updatedUser.id,
+                      full_name: updatedUser.full_name,
+                      email: updatedUser.email,
+                      role: updatedUser.role,
+                      phone: updatedUser.phone || ""
+                  }
+                : null,
+            profile: updatedProfile
         };
     },
 
@@ -646,15 +801,31 @@ const db = {
         return record;
     },
 
-    async getNotifications(userId, limit = 20) {
+    async getNotifications(userId = null, userEmail = null, limit = 20) {
+        if (!userId && !userEmail) {
+            return [];
+        }
+
         if (isPostgresConnected) {
             try {
                 const pool = getPgPool();
+                const conditions = [];
+                const params = [];
+                if (userId) {
+                    params.push(userId);
+                    conditions.push(`user_id = $${params.length}`);
+                }
+                if (userEmail) {
+                    params.push(userEmail.toLowerCase());
+                    conditions.push(`LOWER(recipient_email) = $${params.length}`);
+                }
+
+                params.push(limit);
                 const res = await pool.query(
                     `SELECT * FROM notifications 
-                     WHERE user_id = $1 OR user_id = 'usr_pat_alex_001' OR user_id IS NULL 
-                     ORDER BY created_at DESC LIMIT $2`,
-                    [userId, limit]
+                     WHERE (${conditions.join(" OR ")}) 
+                     ORDER BY created_at DESC LIMIT $${params.length}`,
+                    params
                 );
                 return res.rows;
             } catch (e) {
@@ -665,7 +836,11 @@ const db = {
         const store = loadLocalDb();
         if (!store.notifications) store.notifications = [];
         return store.notifications
-            .filter((n) => !n.user_id || n.user_id === userId || n.user_id === "usr_pat_alex_001")
+            .filter((n) => {
+                if (userId && n.user_id === userId) return true;
+                if (userEmail && n.recipient_email && n.recipient_email.toLowerCase() === userEmail.toLowerCase()) return true;
+                return false;
+            })
             .slice(0, limit);
     },
 
@@ -695,17 +870,23 @@ const db = {
         return notif;
     },
 
-    async getUpcomingAppointmentsWithUsers() {
+    async getUpcomingAppointmentsWithUsers(userId = null) {
         if (isPostgresConnected) {
             try {
                 const pool = getPgPool();
-                const res = await pool.query(`
+                let query = `
                     SELECT a.*, u.full_name as patient_full_name, u.email as patient_email, u.phone as patient_phone
                     FROM appointments a
                     JOIN users u ON a.patient_id = u.id
                     WHERE a.status IN ('Confirmed', 'Scheduled')
-                    ORDER BY a.appointment_date ASC
-                `);
+                `;
+                const params = [];
+                if (userId) {
+                    query += ` AND a.patient_id = $1`;
+                    params.push(userId);
+                }
+                query += ` ORDER BY a.appointment_date ASC`;
+                const res = await pool.query(query, params);
                 return res.rows;
             } catch (e) {
                 console.warn("[PostgreSQL Fallback - getUpcomingAppointmentsWithUsers]:", e.message);
@@ -714,14 +895,14 @@ const db = {
 
         const store = loadLocalDb();
         return store.appointments
-            .filter((a) => a.status === "Confirmed" || a.status === "Scheduled")
+            .filter((a) => (a.status === "Confirmed" || a.status === "Scheduled") && (!userId || a.patient_id === userId))
             .map((a) => {
                 const u = store.users.find((user) => user.id === a.patient_id);
                 return {
                     ...a,
                     patient_full_name: u ? u.full_name : a.patient_name,
-                    patient_email: u ? u.email : "patient@medintellix.com",
-                    patient_phone: u ? u.phone : "+1-555-0199"
+                    patient_email: u ? u.email : "",
+                    patient_phone: u ? u.phone : ""
                 };
             });
     },
@@ -755,9 +936,9 @@ const db = {
                 const u = store.users.find((user) => user.id === m.patient_id);
                 return {
                     ...m,
-                    patient_full_name: u ? u.full_name : "Alex Morgan",
-                    patient_email: u ? u.email : "alex@medintellix.com",
-                    patient_phone: u ? u.phone : "+1-555-0199"
+                    patient_full_name: u ? u.full_name : "Patient",
+                    patient_email: u ? u.email : "",
+                    patient_phone: u ? u.phone : ""
                 };
             });
     }

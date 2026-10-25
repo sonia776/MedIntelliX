@@ -33,24 +33,29 @@ function initializePatientProfile() {
      * after the backend is implemented.
      */
 
-    const demoPatient = {
-        name: "Alex Morgan"
-    };
+    let patientName = "Patient";
+    try {
+        const raw = localStorage.getItem("medintellix_user");
+        if (raw) {
+            const u = JSON.parse(raw);
+            if (u && u.full_name) patientName = u.full_name;
+        }
+    } catch (e) {}
 
     const patientNameElement = document.getElementById("patientName");
     const welcomeNameElement = document.getElementById("welcomeName");
     const initialsElement = document.getElementById("profileInitials");
 
     if (patientNameElement) {
-        patientNameElement.textContent = demoPatient.name;
+        patientNameElement.textContent = patientName;
     }
 
     if (welcomeNameElement) {
-        welcomeNameElement.textContent = getFirstName(demoPatient.name);
+        welcomeNameElement.textContent = getFirstName(patientName);
     }
 
     if (initialsElement) {
-        initialsElement.textContent = getInitials(demoPatient.name);
+        initialsElement.textContent = getInitials(patientName);
     }
 }
 

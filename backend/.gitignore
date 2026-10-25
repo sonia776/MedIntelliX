@@ -4,3 +4,10 @@
 node_modules/
 data/
 *.log
+*.pem
+*.key
+*.pfx
+*.p12
+credentials.json
+serviceAccountKey.json
+

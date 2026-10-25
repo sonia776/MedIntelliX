@@ -317,13 +317,13 @@ class NotificationService {
      * Finds upcoming scheduled appointments and sends alerts via Email + SMS
      */
     async triggerAppointmentReminders(options = {}) {
-        const appointments = await db.getUpcomingAppointmentsWithUsers();
+        const appointments = await db.getUpcomingAppointmentsWithUsers(options.userId || null);
         const results = [];
 
         for (const apt of appointments) {
             const patientName = apt.patient_full_name || apt.patient_name || "Valued Patient";
-            const patientEmail = apt.patient_email || "alex@medintellix.com";
-            const patientPhone = apt.patient_phone || "+1-555-0199";
+            const patientEmail = apt.patient_email || options.email || "";
+            const patientPhone = apt.patient_phone || options.phone || "";
 
             // 1. Build Email & SMS content
             const emailHtml = this.renderAppointmentEmail({
@@ -411,8 +411,8 @@ class NotificationService {
      * Trigger Automated Medication Refill Alerts Scan
      * Checks active medications for upcoming end_date or low supply
      */
-    async triggerRefillAlerts(daysThreshold = 30) {
-        const medications = await db.getActiveMedicationsWithUsers();
+    async triggerRefillAlerts(daysThreshold = 30, userId = null) {
+        const medications = await db.getActiveMedicationsWithUsers(userId);
         const results = [];
         const today = new Date();
 
@@ -428,8 +428,8 @@ class NotificationService {
             // Check if within alert threshold
             if (daysRemaining <= daysThreshold) {
                 const patientName = med.patient_full_name || "Valued Patient";
-                const patientEmail = med.patient_email || "alex@medintellix.com";
-                const patientPhone = med.patient_phone || "+1-555-0199";
+                const patientEmail = med.patient_email || "";
+                const patientPhone = med.patient_phone || "";
 
                 // 1. Build Content
                 const emailHtml = this.renderRefillEmail({
@@ -565,8 +565,8 @@ class NotificationService {
     /**
      * Query notifications for user
      */
-    async getNotifications(userId, limit = 20) {
-        return await db.getNotifications(userId, limit);
+    async getNotifications(userId = null, userEmail = null, limit = 20) {
+        return await db.getNotifications(userId, userEmail, limit);
     }
 }
 

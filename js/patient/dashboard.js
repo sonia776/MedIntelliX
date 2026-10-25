@@ -361,7 +361,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // NOTIFICATION API CONTROLLER (EMAIL & SMS)
     // ==========================================================
 
-    const API_BASE = "http://localhost:5000";
     let currentUserId = "usr_pat_alex_001";
     try {
         const savedUserJson = localStorage.getItem("medintellix_user");

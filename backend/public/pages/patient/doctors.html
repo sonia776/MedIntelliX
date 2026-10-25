@@ -1,0 +1,517 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore doctor profiles in the MedIntelliX patient portal.">
+    <title>Doctors | MedIntelliX</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/patient.css">
+
+    <style>
+        .doctor-toolbar {
+            display: flex;
+            align-items: end;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 24px 0;
+        }
+
+        .doctor-toolbar .form-control,
+        .doctor-toolbar .form-select {
+            min-height: 44px;
+            border-color: var(--border);
+            border-radius: 10px;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .doctor-card {
+            padding: 23px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--surface);
+            box-shadow: 0 4px 18px rgba(32, 49, 63, 0.035);
+            min-width: 0;
+        }
+
+        .doctor-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .doctor-avatar {
+            display: grid;
+            place-items: center;
+            width: 58px;
+            height: 58px;
+            flex-shrink: 0;
+            border-radius: 16px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .doctor-name {
+            margin: 0 0 5px;
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .doctor-specialty {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .doctor-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            margin-bottom: 16px;
+            border-radius: 20px;
+            background: #edf5fc;
+            color: #426783;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .doctor-info-list {
+            display: grid;
+            gap: 12px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doctor-info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .doctor-info-item i {
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .doctor-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 17px;
+        }
+
+        .doctor-profile-button {
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 9px 12px;
+            background: #fff;
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .doctor-profile-button:hover {
+            background: var(--primary-light);
+        }
+
+        .doctor-empty {
+            display: none;
+            padding: 40px 20px;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .doctor-demo-note {
+            margin-top: 24px;
+            padding: 16px;
+            border: 1px solid #d8e5f3;
+            border-radius: 12px;
+            background: #f4f8fd;
+            color: #455d76;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1050px) {
+            .doctor-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .doctor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doctor-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .doctor-toolbar > div {
+                width: 100%;
+                min-width: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="portal-body">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="portal-layout">
+        <aside class="portal-sidebar" id="patientSidebar">
+            <a href="../../index.html" class="portal-brand text-decoration-none">
+                <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                <span>MedIntelliX</span>
+            </a>
+
+            <p class="sidebar-section-label">PATIENT PORTAL</p>
+
+            <nav class="sidebar-navigation" aria-label="Patient navigation">
+                <a href="dashboard.html" class="sidebar-link">
+                    <i class="bi bi-grid"></i><span>Dashboard</span>
+                </a>
+                <a href="health-records.html" class="sidebar-link">
+                    <i class="bi bi-folder2-open"></i><span>Health Records</span>
+                </a>
+                <a href="medical-reports.html" class="sidebar-link">
+                    <i class="bi bi-file-earmark-medical"></i><span>Medical Reports</span>
+                </a>
+                <a href="medications.html" class="sidebar-link">
+                    <i class="bi bi-capsule"></i><span>Medications</span>
+                </a>
+                <a href="appointments.html" class="sidebar-link">
+                    <i class="bi bi-calendar2-check"></i><span>Appointments</span>
+                </a>
+                <a href="doctors.html" class="sidebar-link active" aria-current="page">
+                    <i class="bi bi-person-badge"></i><span>Doctors</span>
+                </a>
+                <a href="health-timeline.html" class="sidebar-link">
+                    <i class="bi bi-clock-history"></i><span>Health Timeline</span>
+                </a>
+                <a href="profile.html" class="sidebar-link">
+                    <i class="bi bi-person-circle"></i><span>My Profile</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-help">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Your health matters</strong>
+                        <p>Keep your health information organised.</p>
+                    </div>
+                </div>
+                <a href="../login.html" class="sidebar-link logout-link" id="logoutLink">
+                    <i class="bi bi-box-arrow-left"></i><span>Sign out</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="portal-main">
+            <header class="portal-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                            aria-label="Open navigation"
+                            aria-controls="patientSidebar" aria-expanded="false">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="breadcrumb-text">Patient Portal / Doctors</div>
+                </div>
+
+                <div class="topbar-right">
+                    <span class="portal-status">
+                        <span class="status-dot"></span> Demo environment
+                    </span>
+                    <button class="topbar-icon-button" id="notificationButton"
+                            type="button" aria-label="Notifications">
+                        <i class="bi bi-bell"></i>
+                    </button>
+                    <div class="topbar-profile">
+                        <div class="profile-avatar" id="profileInitials">P</div>
+                        <div class="topbar-profile-info">
+                            <strong id="patientName">Patient</strong>
+                            <small>Patient</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="portal-content">
+                <div class="dashboard-welcome">
+                    <div>
+                        <p class="section-eyebrow">HEALTHCARE DIRECTORY</p>
+                        <h1>Doctors</h1>
+                        <p>Explore example provider profiles and clinic information.</p>
+                    </div>
+                </div>
+
+                <div class="demo-notice">
+                    <i class="bi bi-info-circle"></i>
+                    <span>All doctor names, credentials and facilities below are fictional examples.</span>
+                </div>
+
+                <div class="dashboard-stats">
+                    <article class="stat-card">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Listed providers</span>
+                            <span class="stat-icon stat-icon-teal"><i class="bi bi-people"></i></span>
+                        </div>
+                        <h2 class="stat-card-value" id="totalDoctors">4</h2>
+                        <p class="stat-card-description">Fictional demo profiles</p>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Specialties</span>
+                            <span class="stat-icon stat-icon-blue"><i class="bi bi-heart-pulse"></i></span>
+                        </div>
+                        <h2 class="stat-card-value" id="totalSpecialties">4</h2>
+                        <p class="stat-card-description">Example specialties</p>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-card-top">
+                            <span class="stat-label">Facilities</span>
+                            <span class="stat-icon stat-icon-purple"><i class="bi bi-hospital"></i></span>
+                        </div>
+                        <h2 class="stat-card-value" id="totalFacilities">4</h2>
+                        <p class="stat-card-description">Example healthcare facilities</p>
+                    </article>
+                </div>
+
+                <div class="doctor-toolbar">
+                    <div class="flex-grow-1">
+                        <label for="doctorSearch" class="form-label">Search providers</label>
+                        <input type="search" id="doctorSearch" class="form-control"
+                               placeholder="Search name, specialty or facility...">
+                    </div>
+
+                    <div style="min-width: 210px;">
+                        <label for="specialtyFilter" class="form-label">Specialty</label>
+                        <select id="specialtyFilter" class="form-select">
+                            <option value="all">All specialties</option>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Paediatrics">Paediatrics</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="doctor-grid" id="doctorGrid">
+
+                    <article class="doctor-card" data-specialty="General Medicine">
+                        <div class="doctor-card-header">
+                            <div class="doctor-avatar">SP</div>
+                            <div>
+                                <h2 class="doctor-name">Dr. Sample Provider</h2>
+                                <p class="doctor-specialty">General Medicine</p>
+                            </div>
+                        </div>
+                        <span class="doctor-badge"><i class="bi bi-hospital"></i> Primary care</span>
+                        <div class="doctor-info-list">
+                            <div class="doctor-info-item">
+                                <i class="bi bi-building"></i>
+                                <span>Example Health Centre</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Demo location, India</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-card-text"></i>
+                                <span>Example credentials — not verified</span>
+                            </div>
+                        </div>
+                        <div class="doctor-card-footer">
+                            <span class="text-secondary small">Demo profile</span>
+                            <button class="doctor-profile-button" type="button" data-doctor="0">
+                                View profile <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-specialty="Cardiology">
+                        <div class="doctor-card-header">
+                            <div class="doctor-avatar">EC</div>
+                            <div>
+                                <h2 class="doctor-name">Dr. Example Clinician</h2>
+                                <p class="doctor-specialty">Cardiology</p>
+                            </div>
+                        </div>
+                        <span class="doctor-badge"><i class="bi bi-heart-pulse"></i> Heart health</span>
+                        <div class="doctor-info-list">
+                            <div class="doctor-info-item">
+                                <i class="bi bi-building"></i>
+                                <span>Sample Medical Centre</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Demo location, India</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-card-text"></i>
+                                <span>Example credentials — not verified</span>
+                            </div>
+                        </div>
+                        <div class="doctor-card-footer">
+                            <span class="text-secondary small">Demo profile</span>
+                            <button class="doctor-profile-button" type="button" data-doctor="1">
+                                View profile <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-specialty="Dermatology">
+                        <div class="doctor-card-header">
+                            <div class="doctor-avatar">DS</div>
+                            <div>
+                                <h2 class="doctor-name">Dr. Demo Specialist</h2>
+                                <p class="doctor-specialty">Dermatology</p>
+                            </div>
+                        </div>
+                        <span class="doctor-badge"><i class="bi bi-clipboard2-pulse"></i> Skin health</span>
+                        <div class="doctor-info-list">
+                            <div class="doctor-info-item">
+                                <i class="bi bi-building"></i>
+                                <span>Example Hospital</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Demo location, India</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-card-text"></i>
+                                <span>Example credentials — not verified</span>
+                            </div>
+                        </div>
+                        <div class="doctor-card-footer">
+                            <span class="text-secondary small">Demo profile</span>
+                            <button class="doctor-profile-button" type="button" data-doctor="2">
+                                View profile <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="doctor-card" data-specialty="Paediatrics">
+                        <div class="doctor-card-header">
+                            <div class="doctor-avatar">PC</div>
+                            <div>
+                                <h2 class="doctor-name">Dr. Prototype Consultant</h2>
+                                <p class="doctor-specialty">Paediatrics</p>
+                            </div>
+                        </div>
+                        <span class="doctor-badge"><i class="bi bi-emoji-smile"></i> Child health</span>
+                        <div class="doctor-info-list">
+                            <div class="doctor-info-item">
+                                <i class="bi bi-building"></i>
+                                <span>Demo Family Clinic</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Demo location, India</span>
+                            </div>
+                            <div class="doctor-info-item">
+                                <i class="bi bi-card-text"></i>
+                                <span>Example credentials — not verified</span>
+                            </div>
+                        </div>
+                        <div class="doctor-card-footer">
+                            <span class="text-secondary small">Demo profile</span>
+                            <button class="doctor-profile-button" type="button" data-doctor="3">
+                                View profile <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="doctor-empty" id="doctorEmpty">
+                    <i class="bi bi-search fs-3"></i>
+                    <h2 class="h6 mt-3">No matching providers</h2>
+                    <p class="mb-0">Try a different name or specialty.</p>
+                </div>
+
+                <div class="doctor-demo-note">
+                    <strong><i class="bi bi-shield-check me-1"></i> Verify before choosing care</strong>
+                    <p class="mb-0 mt-1">
+                        These profiles do not represent real or verified practitioners.
+                        A production directory should display verified registration details,
+                        actual facility information, and reliable contact or appointment options.
+                    </p>
+                </div>
+
+                <footer class="portal-footer">
+                    <span>© <span id="doctorsYear"></span> MedIntelliX</span>
+                    <span>Prototype · No real patient data</span>
+                </footer>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal fade" id="doctorDetailsModal" tabindex="-1"
+         aria-labelledby="doctorModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="doctorModalTitle">Doctor profile</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary small">
+                        Fictional profile for demonstration only.
+                    </p>
+                    <dl class="row mb-0">
+                        <dt class="col-5 mb-2">Specialty</dt>
+                        <dd class="col-7 mb-2" id="modalDoctorSpecialty">—</dd>
+
+                        <dt class="col-5 mb-2">Facility</dt>
+                        <dd class="col-7 mb-2" id="modalDoctorFacility">—</dd>
+
+                        <dt class="col-5 mb-2">Location</dt>
+                        <dd class="col-7 mb-2" id="modalDoctorLocation">—</dd>
+
+                        <dt class="col-5 mb-2">Credentials</dt>
+                        <dd class="col-7 mb-2" id="modalDoctorCredentials">—</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/patient/doctors.js"></script>
+</body>
+</html>

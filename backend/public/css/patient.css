@@ -1,0 +1,130 @@
+
+/* =========================================
+   MedIntelliX — Patient Portal Styles
+   File: css/patient.css
+   ========================================= */
+
+/* Patient portal theme */
+
+.portal-body {
+    --patient-primary: #187c80;
+    --patient-primary-dark: #12666a;
+    --patient-background: #f7f9fc;
+    --patient-surface: #ffffff;
+    --patient-text: #20313f;
+    --patient-muted: #637381;
+    --patient-border: #e3eaf0;
+}
+
+/* Patient sidebar branding */
+
+.portal-sidebar .portal-brand-icon {
+    background: #e5f4f3;
+    color: var(--patient-primary);
+}
+
+.portal-sidebar .sidebar-link.active {
+    background: #e5f4f3;
+    color: var(--patient-primary-dark) !important;
+}
+
+/* Patient welcome section */
+
+.portal-body .dashboard-welcome {
+    scroll-margin-top: 100px;
+}
+
+.portal-body .dashboard-welcome h1 {
+    color: var(--patient-text);
+}
+
+.portal-body .dashboard-welcome p {
+    color: var(--patient-muted);
+}
+
+/* Patient statistics cards */
+
+.portal-body .stat-card {
+    position: relative;
+}
+
+.portal-body .stat-card-value {
+    font-variant-numeric: tabular-nums;
+}
+
+.portal-body .stat-card-link {
+    transition: color 0.2s ease;
+}
+
+/* Recent health activity */
+
+.portal-body .activity-item {
+    position: relative;
+}
+
+.portal-body .activity-details h3 {
+    overflow-wrap: anywhere;
+}
+
+.portal-body .activity-date {
+    line-height: 1.5;
+}
+
+/* Quick actions */
+
+.portal-body .quick-action {
+    text-decoration: none;
+}
+
+.portal-body .quick-action:focus-visible {
+    outline: 3px solid rgba(24, 124, 128, 0.3);
+    outline-offset: 2px;
+}
+
+/* Health information notice */
+
+.portal-body .health-info-panel {
+    border-color: #dce9f5;
+}
+
+/* Accessible hover and keyboard states */
+
+.portal-body .dashboard-primary-button:focus-visible,
+.portal-body .panel-action:focus-visible,
+.portal-body .stat-card-link:focus-visible,
+.portal-body .health-info-link:focus-visible {
+    outline: 3px solid rgba(24, 124, 128, 0.3);
+    outline-offset: 3px;
+}
+
+/* Tablet and mobile adjustments */
+
+@media (max-width: 900px) {
+    .portal-body .dashboard-welcome {
+        scroll-margin-top: 85px;
+    }
+}
+
+@media (max-width: 600px) {
+    .portal-body .demo-notice {
+        padding: 12px;
+        font-size: 11px;
+    }
+
+    .portal-body .activity-details h3 {
+        font-size: 11px;
+    }
+
+    .portal-body .quick-action {
+        padding: 12px 6px;
+    }
+}
+
+/* Reduced motion accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+    .portal-body .stat-card,
+    .portal-body .stat-card-link {
+        transition: none;
+    }
+}

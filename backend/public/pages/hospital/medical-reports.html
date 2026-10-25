@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Reports | MedIntelliX Hospital</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/hospital.css">
+</head>
+<body>
+<div class="portal-layout">
+
+    <aside class="portal-sidebar" id="patientSidebar">
+        <a href="../../index.html" class="portal-brand text-decoration-none">
+            <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+            <span>MedIntelliX<small>Hospital Portal</small></span>
+        </a>
+
+        <div class="sidebar-section-label">WORKSPACE</div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+            </a>
+            <a href="patients.html" class="sidebar-link">
+                <i class="bi bi-people"></i><span>Patients</span>
+            </a>
+            <a href="register-patient.html" class="sidebar-link">
+                <i class="bi bi-person-plus"></i><span>Register Patient</span>
+            </a>
+            <a href="consultations.html" class="sidebar-link">
+                <i class="bi bi-clipboard2-pulse"></i><span>Consultations</span>
+            </a>
+            <a href="medical-reports.html" class="sidebar-link active">
+                <i class="bi bi-file-earmark-medical"></i><span>Medical Reports</span>
+            </a>
+            <a href="staff.html" class="sidebar-link">
+                <i class="bi bi-person-badge"></i><span>Staff</span>
+            </a>
+            <a href="hospital-profile.html" class="sidebar-link">
+                <i class="bi bi-hospital"></i><span>Hospital Profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help">
+                <i class="bi bi-shield-check"></i>
+                <strong>Privacy matters</strong>
+                <p>Access records only when authorised.</p>
+            </div>
+            <a href="../../pages/login.html" class="sidebar-link" id="logoutLink">
+                <i class="bi bi-box-arrow-left"></i><span>Exit portal</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <div class="topbar-eyebrow">Hospital workspace</div>
+                    <h1 class="topbar-title">Medical Reports</h1>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-button" id="notificationButton" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <div class="user-avatar">HA</div>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="portal-notice mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Demonstration workspace using fictional reports. No clinical records are stored or transmitted.
+            </div>
+
+            <section class="page-heading mb-4">
+                <div>
+                    <h2>Report management</h2>
+                    <p>Find reports and track their review status.</p>
+                </div>
+                <button class="btn btn-primary" id="exportButton">
+                    <i class="bi bi-download me-2"></i>Export list
+                </button>
+            </section>
+
+            <section class="row g-3 mb-4" aria-label="Report statistics">
+                <div class="col-6 col-xl-3">
+                    <div class="portal-stat-card">
+                        <div class="stat-icon"><i class="bi bi-files"></i></div>
+                        <div class="stat-label">Total reports</div>
+                        <div class="stat-value" id="totalReports">0</div>
+                        <div class="stat-caption">In this demo list</div>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="portal-stat-card">
+                        <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <div class="stat-label">Pending review</div>
+                        <div class="stat-value" id="pendingReports">0</div>
+                        <div class="stat-caption">Awaiting review</div>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="portal-stat-card">
+                        <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                        <div class="stat-label">Reviewed</div>
+                        <div class="stat-value" id="reviewedReports">0</div>
+                        <div class="stat-caption">Marked as reviewed</div>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-3">
+                    <div class="portal-stat-card">
+                        <div class="stat-icon"><i class="bi bi-archive"></i></div>
+                        <div class="stat-label">Archived</div>
+                        <div class="stat-value" id="archivedReports">0</div>
+                        <div class="stat-caption">Archived in this session</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="portal-card">
+                <div class="portal-card-header">
+                    <div>
+                        <h3>Report directory</h3>
+                        <p>Search, filter and review demonstration entries.</p>
+                    </div>
+                    <span class="results-count" id="resultsCount">0 reports</span>
+                </div>
+
+                <div class="filter-toolbar">
+                    <div class="search-field">
+                        <i class="bi bi-search"></i>
+                        <input type="search" id="reportSearch" class="form-control"
+                               placeholder="Search report ID, patient, doctor..."
+                               aria-label="Search reports">
+                    </div>
+
+                    <select id="statusFilter" class="form-select" aria-label="Filter by status">
+                        <option value="all">All statuses</option>
+                        <option value="pending">Pending review</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="archived">Archived</option>
+                    </select>
+
+                    <select id="typeFilter" class="form-select" aria-label="Filter by report type">
+                        <option value="all">All report types</option>
+                        <option value="Blood Test">Blood Test</option>
+                        <option value="Imaging">Imaging</option>
+                        <option value="Pathology">Pathology</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="General">General</option>
+                    </select>
+
+                    <button class="btn btn-outline-secondary" id="resetFilters">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table portal-table align-middle">
+                        <thead>
+                        <tr>
+                            <th>Report</th>
+                            <th>Patient</th>
+                            <th>Report type</th>
+                            <th>Requested by</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="reportsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state d-none" id="emptyState">
+                    <i class="bi bi-file-earmark-x"></i>
+                    <h4>No reports found</h4>
+                    <p>Try changing your search or filters.</p>
+                    <button class="btn btn-outline-primary" id="emptyResetButton">Clear filters</button>
+                </div>
+            </section>
+
+            <p class="text-secondary small mt-3">
+                <i class="bi bi-shield-lock me-1"></i>
+                Demo only: review actions are not saved to a database and do not represent clinical approval.
+            </p>
+        </div>
+    </main>
+</div>
+
+<div class="modal fade" id="reportDetailsModal" tabindex="-1" aria-labelledby="reportModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="small text-secondary">Report details</div>
+                    <h5 class="modal-title" id="reportModalTitle">Medical report</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="reportDetailsBody"></div>
+            <div class="modal-footer flex-wrap">
+                <button class="btn btn-outline-secondary me-auto" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-outline-primary" id="markPendingButton">Mark pending</button>
+                <button class="btn btn-outline-secondary" id="archiveReportButton">Archive</button>
+                <button class="btn btn-primary" id="markReviewedButton">Mark reviewed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reportToast" class="portal-toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/hospital/reports.js"></script>
+</body>
+</html>

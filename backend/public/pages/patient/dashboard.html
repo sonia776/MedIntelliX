@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Dashboard | MedIntelliX</title>
+
+    <meta
+        name="description"
+        content="Patient dashboard for the MedIntelliX healthcare platform."
+    >
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Shared and Patient Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/patient.css">
+</head>
+
+<body class="portal-body">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Patient Portal -->
+    <div class="portal-layout">
+
+        <!-- Sidebar -->
+        <aside class="portal-sidebar" id="patientSidebar">
+
+            <a href="dashboard.html" class="portal-brand">
+                <span class="portal-brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <span class="portal-brand-text">
+                    MedIntelliX
+                    <small>Patient Portal</small>
+                </span>
+            </a>
+
+            <div class="sidebar-section-label">
+                MAIN MENU
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Patient navigation">
+
+                <a href="dashboard.html" class="sidebar-link active" aria-current="page">
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#ai-assistant-section" class="sidebar-link" style="color: #0d9488; font-weight: 600; background: rgba(13, 148, 136, 0.08); border-radius: 8px;">
+                    <i class="bi bi-robot" style="color: #0d9488; font-size: 1.15rem;"></i>
+                    <span>AI Assistant (Gemini)</span>
+                    <span class="badge rounded-pill ms-auto" style="font-size: 10px; background-color: #0d9488; color: white;">LIVE</span>
+                </a>
+
+                <a href="#notifications-section" class="sidebar-link" style="color: #2563eb; font-weight: 600; background: rgba(37, 99, 235, 0.08); border-radius: 8px;">
+                    <i class="bi bi-bell-fill" style="color: #2563eb; font-size: 1.15rem;"></i>
+                    <span>Email &amp; SMS Alerts</span>
+                    <span class="badge rounded-pill ms-auto bg-primary text-white" id="sidebarNotifBadge" style="font-size: 10px;">2</span>
+                </a>
+
+                <a href="health-records.html" class="sidebar-link">
+                    <i class="bi bi-folder2-open"></i>
+                    <span>Health Records</span>
+                </a>
+
+                <a href="medical-reports.html" class="sidebar-link">
+                    <i class="bi bi-file-earmark-medical"></i>
+                    <span>Medical Reports</span>
+                </a>
+
+                <a href="medications.html" class="sidebar-link">
+                    <i class="bi bi-capsule"></i>
+                    <span>Medications</span>
+                </a>
+
+                <a href="appointments.html" class="sidebar-link">
+                    <i class="bi bi-calendar2-check"></i>
+                    <span>Appointments</span>
+                </a>
+
+                <a href="doctors.html" class="sidebar-link">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Doctors</span>
+                </a>
+
+                <a href="health-timeline.html" class="sidebar-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Health Timeline</span>
+                </a>
+
+                <div class="sidebar-section-label sidebar-section-spaced">
+                    ACCOUNT
+                </div>
+
+                <a href="profile.html" class="sidebar-link">
+                    <i class="bi bi-person-circle"></i>
+                    <span>My Profile</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <div class="sidebar-help">
+                    <span class="help-icon">
+                        <i class="bi bi-headset"></i>
+                    </span>
+
+                    <div>
+                        <strong>Need assistance?</strong>
+                        <small>Help and support</small>
+                    </div>
+                </div>
+
+                <a href="../login.html" class="sidebar-link logout-link" id="logoutLink">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Sign out</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main Area -->
+        <div class="portal-main">
+
+            <!-- Topbar -->
+            <header class="portal-topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        type="button"
+                        class="sidebar-toggle"
+                        id="sidebarToggle"
+                        aria-label="Open navigation menu"
+                        aria-controls="patientSidebar"
+                        aria-expanded="false"
+                    >
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <div class="breadcrumb-text">
+                        <span>Patient Portal</span>
+                        <i class="bi bi-chevron-right"></i>
+                        <strong>Dashboard</strong>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="portal-status">
+                        <span class="status-dot"></span>
+                        Demo Mode
+                    </div>
+
+                    <button
+                        type="button"
+                        class="topbar-icon-button"
+                        id="notificationButton"
+                        aria-label="Notifications"
+                    >
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-indicator"></span>
+                    </button>
+
+                    <a href="profile.html" class="topbar-profile">
+
+                        <span class="profile-avatar" id="profileInitials">
+                            P
+                        </span>
+
+                        <span class="topbar-profile-info">
+                            <strong id="patientName">Patient</strong>
+                            <small>Patient Account</small>
+                        </span>
+
+                        <i class="bi bi-chevron-down profile-chevron"></i>
+
+                    </a>
+
+                </div>
+
+            </header>
+
+
+            <!-- Dashboard Content -->
+            <main class="portal-content">
+
+                <!-- Welcome -->
+                <section class="dashboard-welcome">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            YOUR PERSONAL HEALTHSPACE
+                        </span>
+
+                        <h1>
+                            Welcome back, <span id="welcomeName">Patient</span>
+                        </h1>
+
+                        <p>
+                            Keep track of your health information and
+                            stay connected with your care journey.
+                        </p>
+                    </div>
+
+                    <a href="appointments.html" class="btn dashboard-primary-button">
+                        <i class="bi bi-calendar-plus"></i>
+                        Book an appointment
+                    </a>
+
+                </section>
+
+
+                <!-- Demo Notice -->
+                <div class="demo-notice" role="note">
+                    <i class="bi bi-info-circle"></i>
+
+                    <p>
+                        <strong>Prototype preview:</strong>
+                        The information shown below is sample interface content,
+                        not actual patient data. No medical records are connected.
+                    </p>
+                </div>
+
+
+                <!-- Summary Cards -->
+                <section class="dashboard-stats" aria-label="Health overview">
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-teal">
+                                <i class="bi bi-folder2-open"></i>
+                            </span>
+
+                            <span class="stat-label">Health Records</span>
+                        </div>
+
+                        <div class="stat-card-value" id="recordsCount">
+                            04
+                        </div>
+
+                        <p class="stat-card-description">
+                            Records in this demo
+                        </p>
+
+                        <a href="health-records.html" class="stat-card-link">
+                            View records
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-blue">
+                                <i class="bi bi-file-earmark-medical"></i>
+                            </span>
+
+                            <span class="stat-label">Medical Reports</span>
+                        </div>
+
+                        <div class="stat-card-value" id="reportsCount">
+                            03
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample reports
+                        </p>
+
+                        <a href="medical-reports.html" class="stat-card-link">
+                            View reports
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-coral">
+                                <i class="bi bi-capsule"></i>
+                            </span>
+
+                            <span class="stat-label">Medications</span>
+                        </div>
+
+                        <div class="stat-card-value" id="medicationsCount">
+                            02
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample medication entries
+                        </p>
+
+                        <a href="medications.html" class="stat-card-link">
+                            View medications
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+                            <span class="stat-icon stat-icon-purple">
+                                <i class="bi bi-calendar2-check"></i>
+                            </span>
+
+                            <span class="stat-label">Appointments</span>
+                        </div>
+
+                        <div class="stat-card-value" id="appointmentsCount">
+                            01
+                        </div>
+
+                        <p class="stat-card-description">
+                            Sample upcoming appointment
+                        </p>
+
+                        <a href="appointments.html" class="stat-card-link">
+                            View appointments
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                </section>
+
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+
+                    <!-- Recent Health Activity -->
+                    <section class="dashboard-panel activity-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+                                <h2>Recent Health Activity</h2>
+                                <p>A preview of your health timeline</p>
+                            </div>
+
+                            <a href="health-timeline.html" class="panel-action">
+                                View timeline
+                            </a>
+
+                        </div>
+
+                        <div class="activity-list">
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-teal">
+                                    <i class="bi bi-file-earmark-medical"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Medical report added</h3>
+                                    <p>A sample report was added to the demo timeline.</p>
+                                    <span class="activity-date">Demo entry · Recent</span>
+                                </div>
+
+                                <span class="activity-tag">Report</span>
+
+                            </article>
+
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-blue">
+                                    <i class="bi bi-calendar-check"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Appointment scheduled</h3>
+                                    <p>A sample appointment appears in this preview.</p>
+                                    <span class="activity-date">Demo entry</span>
+                                </div>
+
+                                <span class="activity-tag">Visit</span>
+
+                            </article>
+
+
+                            <article class="activity-item">
+
+                                <span class="activity-icon activity-coral">
+                                    <i class="bi bi-capsule"></i>
+                                </span>
+
+                                <div class="activity-details">
+                                    <h3>Medication entry updated</h3>
+                                    <p>A sample medication entry was updated.</p>
+                                    <span class="activity-date">Demo entry</span>
+                                </div>
+
+                                <span class="activity-tag">Medicine</span>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Quick Actions -->
+                    <section class="dashboard-panel quick-actions-panel">
+
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Quick Actions</h2>
+                                <p>Navigate to your health tools</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions-list">
+
+                            <a href="#ai-assistant-section" class="quick-action" style="border-left: 3px solid #0d9488; background: #f0fdfa;">
+                                <span class="quick-action-icon" style="background: rgba(13, 148, 136, 0.15); color: #0d9488;">
+                                    <i class="bi bi-robot"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong style="color: #0d9488;">AI Clinical Assistant</strong>
+                                    <small>Instant symptom triage &amp; lab explainer</small>
+                                </span>
+
+                                <i class="bi bi-arrow-down-circle-fill" style="color: #0d9488;"></i>
+                            </a>
+
+                            <a href="#notifications-section" class="quick-action" style="border-left: 3px solid #2563eb; background: #eff6ff;">
+                                <span class="quick-action-icon" style="background: rgba(37, 99, 235, 0.15); color: #2563eb;">
+                                    <i class="bi bi-bell-fill"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong style="color: #2563eb;">Notification Center</strong>
+                                    <small>Appointment &amp; medicine refill alerts</small>
+                                </span>
+
+                                <i class="bi bi-arrow-down-circle-fill" style="color: #2563eb;"></i>
+                            </a>
+
+                            <a href="health-records.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-folder-plus"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Health records</strong>
+                                    <small>Browse your records</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="medical-reports.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Medical reports</strong>
+                                    <small>Review sample reports</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="appointments.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>Appointments</strong>
+                                    <small>Explore appointment options</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+
+                            <a href="profile.html" class="quick-action">
+                                <span class="quick-action-icon">
+                                    <i class="bi bi-person-gear"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong>My profile</strong>
+                                    <small>View profile settings</small>
+                                </span>
+
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- ==========================================================
+                     CATEGORY 6: AI MEDICAL HEALTH ASSISTANT (LLM API)
+                     Developer: Sonia (APIs & External Integrations)
+                     ========================================================== -->
+                <section id="ai-assistant-section" class="dashboard-panel ai-assistant-panel mb-4 p-4 rounded-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%); border-left: 5px solid #0d9488 !important; scroll-margin-top: 80px;">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-grid place-items-center text-white" style="width: 48px; height: 48px; background: #0d9488; font-size: 22px;">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div>
+                                <span class="badge text-white px-2 py-1 rounded-pill" style="background: #0d9488; font-size: 11px;">
+                                    <i class="bi bi-stars me-1"></i> AI CLINICAL ASSISTANT
+                                </span>
+                                <h3 class="h5 fw-bold mb-0 text-dark mt-1">MedIntelliX AI Clinical Health Assistant</h3>
+                                <small class="text-muted">Instant clinical symptom triage and diagnostic report insights</small>
+                            </div>
+                        </div>
+                        <ul class="nav nav-pills gap-1" id="aiAssistantTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-pill px-3 py-1 small fw-semibold" id="tab-ai-symptoms" data-bs-toggle="pill" data-bs-target="#pane-ai-symptoms" type="button" role="tab">
+                                    <i class="bi bi-clipboard2-pulse me-1"></i> Symptom Triage
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-pill px-3 py-1 small fw-semibold" id="tab-ai-reports" data-bs-toggle="pill" data-bs-target="#pane-ai-reports" type="button" role="tab">
+                                    <i class="bi bi-file-earmark-medical me-1"></i> Lab Report Explainer
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="aiAssistantTabsContent">
+                        <!-- PANE 1: SYMPTOM TRIAGE -->
+                        <div class="tab-pane fade show active" id="pane-ai-symptoms" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <label class="form-label fw-semibold small text-secondary">Describe your symptoms or what you are experiencing:</label>
+                                    <div class="input-group mb-2">
+                                        <textarea id="aiSymptomsInput" class="form-control" rows="3" placeholder="e.g., I have had a dry cough, low-grade fever (100.5°F), and fatigue for 2 days..."></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div class="d-flex gap-1 flex-wrap align-items-center">
+                                            <span class="small text-muted me-1" style="font-size: 11px;">Quick examples:</span>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="I have a mild fever of 100.5F, sore throat, and dry cough for 2 days">Fever &amp; Cough</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="Severe crushing chest pain radiating to left arm with shortness of breath and sweating">Chest Pain (Red Flag)</button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill py-0 px-2 ai-quick-symptom" data-symptom="Epigastric burning stomach pain after meals and nausea for 3 days">Stomach Acidity</button>
+                                        </div>
+                                        <button class="btn btn-primary px-3 py-2 fw-semibold" id="btnAnalyzeSymptoms" style="background-color: #0d9488; border-color: #0d9488;">
+                                            <i class="bi bi-stars me-1"></i> Consult AI
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div id="aiSymptomsResult" class="h-100 p-3 bg-white rounded-3 border" style="min-height: 180px;">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-chat-heart text-teal fs-3" style="color: #0d9488;"></i>
+                                            <p class="small mb-0 mt-2">Enter symptoms or pick an example above to see clinical AI triage, potential conditions, and doctor recommendations.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANE 2: LAB REPORT EXPLAINER -->
+                        <div class="tab-pane fade" id="pane-ai-reports" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <label class="form-label fw-semibold small text-secondary">Paste lab report findings or numerical test results:</label>
+                                    <div class="input-group mb-2">
+                                        <textarea id="aiReportInput" class="form-control" rows="3" placeholder="e.g., Fasting Blood Sugar: 148 mg/dL, HbA1c: 7.2%, Serum Creatinine: 1.1 mg/dL..."></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div class="d-flex gap-1 flex-wrap align-items-center">
+                                            <span class="small text-muted me-1" style="font-size: 11px;">Examples:</span>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-report" data-report="HbA1c is 7.4% and Fasting Blood Sugar is 152 mg/dL">Diabetes (HbA1c 7.4%)</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 ai-quick-report" data-report="Total Cholesterol: 245 mg/dL, LDL: 158 mg/dL, HDL: 38 mg/dL, Triglycerides: 210 mg/dL">Lipid Panel (High Cholesterol)</button>
+                                        </div>
+                                        <button class="btn btn-primary px-3 py-2 fw-semibold" id="btnExplainReport" style="background-color: #0d9488; border-color: #0d9488;">
+                                            <i class="bi bi-file-earmark-medical me-1"></i> Explain Report
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div id="aiReportResult" class="h-100 p-3 bg-white rounded-3 border" style="min-height: 180px;">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="bi bi-file-earmark-text text-teal fs-3" style="color: #0d9488;"></i>
+                                            <p class="small mb-0 mt-2">Paste lab test values to receive plain-language explanations, clinical meaning, and dietary advice.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==========================================================
+                     CATEGORY 6: NOTIFICATION API (EMAIL & SMS)
+                     Developer: Sonia (APIs & External Integrations)
+                     ========================================================== -->
+                <section id="notifications-section" class="dashboard-panel mb-4 p-4 rounded-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border-left: 5px solid #2563eb !important; scroll-margin-top: 80px;">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-grid place-items-center text-white" style="width: 48px; height: 48px; background: #2563eb; font-size: 22px;">
+                                <i class="bi bi-bell-fill"></i>
+                            </div>
+                            <div>
+                                <span class="badge text-white px-2 py-1 rounded-pill" style="background: #2563eb; font-size: 11px;">
+                                    <i class="bi bi-bell-fill me-1"></i> PATIENT ALERTS &amp; NOTIFICATIONS
+                                </span>
+                                <h3 class="h5 fw-bold mb-0 text-dark mt-1">MedIntelliX Automated Notification &amp; Alert System</h3>
+                                <small class="text-muted">Automated SMS &amp; Email alerts for scheduled appointments and medicine refills</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-sm btn-primary fw-semibold px-3 rounded-pill" id="btnTriggerApptReminders">
+                                <i class="bi bi-calendar2-check me-1"></i> Trigger 24h Appt Reminders
+                            </button>
+                            <button type="button" class="btn btn-sm btn-warning fw-semibold px-3 rounded-pill text-dark" id="btnTriggerRefillAlerts">
+                                <i class="bi bi-capsule-pill me-1"></i> Trigger Medicine Refill Alerts
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" id="btnRefreshNotifs">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notification System Feedback Banner -->
+                    <div id="notificationAlertBanner" class="d-none alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        <span id="notificationAlertMsg">Notifications triggered successfully!</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- LEFT COL: MANUAL DISPATCH & PREVIEW -->
+                        <div class="col-lg-5">
+                            <div class="bg-white p-3 rounded-3 border h-100 shadow-xs">
+                                <h4 class="h6 fw-bold text-dark mb-3 d-flex align-items-center">
+                                    <i class="bi bi-send-check text-primary me-2"></i> On-Demand Direct Dispatch
+                                </h4>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label small text-secondary fw-semibold mb-1">Recipient Patient Email:</label>
+                                    <input type="email" id="notifRecipientEmail" class="form-control form-control-sm" placeholder="Enter recipient email">
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label small text-secondary fw-semibold mb-1">Recipient Mobile Number (SMS):</label>
+                                    <input type="text" id="notifRecipientPhone" class="form-control form-control-sm" placeholder="Enter recipient phone">
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label small text-secondary fw-semibold mb-1">Notification Template / Scenario:</label>
+                                    <select id="notifTemplateSelect" class="form-select form-select-sm">
+                                        <option value="appt">📅 24-Hour Clinical Appointment Reminder</option>
+                                        <option value="refill">💊 Prescription Refill Urgent Warning</option>
+                                        <option value="report">📋 Diagnostic Lab Report Ready for Review</option>
+                                        <option value="custom">✍️ Custom Administrative Alert</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small text-secondary fw-semibold mb-1">Channels to Dispatch:</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="form-check form-check-inline small">
+                                            <input class="form-check-input" type="checkbox" id="channelEmail" checked>
+                                            <label class="form-check-label" for="channelEmail">📧 Email (HTML)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline small">
+                                            <input class="form-check-input" type="checkbox" id="channelSms" checked>
+                                            <label class="form-check-label" for="channelSms">📱 SMS (Cellular)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" id="btnDispatchCustomNotif" class="btn btn-primary w-100 fw-semibold btn-sm py-2">
+                                    <i class="bi bi-broadcast me-1"></i> Dispatch Multi-Channel Notification
+                                </button>
+
+                                <div id="dispatchLiveResult" class="mt-3 p-2 bg-light rounded border small d-none">
+                                    <strong class="d-block text-success mb-1"><i class="bi bi-check-circle-fill me-1"></i> Dispatch Acknowledged:</strong>
+                                    <div id="dispatchLiveResultDetails" style="font-size: 11px;" class="text-secondary"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COL: LIVE POSTGRESQL NOTIFICATION HISTORY -->
+                        <div class="col-lg-7">
+                            <div class="bg-white p-3 rounded-3 border h-100 shadow-xs">
+                                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                    <h4 class="h6 fw-bold text-dark mb-0 d-flex align-items-center">
+                                        <i class="bi bi-clock-history text-primary me-2"></i> Live Delivery Logs (Supabase PostgreSQL)
+                                    </h4>
+                                    <span class="badge bg-primary-subtle text-primary" id="notifCountBadge">0 Logged</span>
+                                </div>
+
+                                <div id="notificationHistoryList" class="overflow-auto pe-1" style="max-height: 380px;">
+                                    <div class="text-center py-4 text-muted small">
+                                        <i class="bi bi-bell-slash text-secondary fs-4 d-block mb-1"></i>
+                                        No notification logs recorded yet. Use the triggers above to dispatch test reminders!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Health Information Panel -->
+                <section class="health-info-panel">
+
+                    <div class="health-info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div class="health-info-content">
+                        <h2>Your health information matters</h2>
+
+                        <p>
+                            In the live application, you will be able to review
+                            authorised records and manage available privacy and
+                            consent settings. Those features are not connected yet.
+                        </p>
+                    </div>
+
+                    <a href="profile.html" class="health-info-link">
+                        Explore profile
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </section>
+
+
+                <!-- Footer -->
+                <footer class="portal-footer">
+                    <p>
+                        © <span id="dashboardYear"></span> MedIntelliX.
+                        Connected healthcare, designed responsibly.
+                    </p>
+
+                    <span>
+                        Prototype interface · Not for clinical use
+                    </span>
+                </footer>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Shared and Patient JavaScript -->
+    <script src="../../js/common.js"></script>
+    <script src="../../js/patient/dashboard.js"></script>
+
+</body>
+</html>

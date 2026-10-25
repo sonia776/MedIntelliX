@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your MedIntelliX patient profile and preferences.">
+    <title>My Profile | MedIntelliX</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/patient.css">
+
+    <style>
+        .profile-page { max-width: 1150px; margin: auto; }
+        .profile-heading { margin-bottom: 26px; }
+        .profile-heading h1 { color: #20313f; font-size: clamp(1.7rem,3vw,2.2rem); font-weight: 750; margin-bottom: 8px; }
+        .profile-heading p { color: #637381; margin: 0; line-height: 1.7; }
+
+        .profile-hero {
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+            background: linear-gradient(120deg,#e5f4f3,#f1f7fb);
+            border: 1px solid #dcebe9; border-radius: 18px; padding: 25px;
+            margin-bottom: 22px;
+        }
+        .profile-avatar {
+            width: 82px; height: 82px; flex-shrink: 0; border-radius: 50%;
+            display: grid; place-items: center; background: #187c80; color: white;
+            font-size: 26px; font-weight: 750; border: 4px solid white;
+        }
+        .profile-hero h2 { font-size: 22px; font-weight: 750; color: #20313f; margin: 0 0 6px; }
+        .profile-hero p { color: #637381; margin: 0 0 10px; font-size: 13px; }
+        .profile-status {
+            display: inline-flex; align-items: center; gap: 6px; border-radius: 20px;
+            background: white; color: #187c80; border: 1px solid #cfe6e4;
+            padding: 5px 10px; font-size: 11px; font-weight: 650;
+        }
+
+        .profile-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(250px,.65fr); gap: 20px; }
+        .profile-card { background: white; border: 1px solid #e3eaf0; border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+        .profile-card:last-child { margin-bottom: 0; }
+        .profile-card-heading { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; }
+        .profile-card-icon {
+            display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0;
+            border-radius: 12px; background: #e5f4f3; color: #187c80; font-size: 19px;
+        }
+        .profile-card-heading h2 { font-size: 16px; font-weight: 750; color: #20313f; margin: 1px 0 5px; }
+        .profile-card-heading p { font-size: 12px; color: #84919d; margin: 0; line-height: 1.6; }
+        .profile-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px; }
+        .profile-field { min-width: 0; }
+        .profile-field.full-width { grid-column: 1 / -1; }
+        .profile-field label { display: block; font-size: 12px; font-weight: 650; color: #526270; margin-bottom: 7px; }
+        .profile-field input, .profile-field select, .profile-field textarea {
+            display: block; width: 100%; min-height: 44px; border: 1px solid #dfe6ec;
+            border-radius: 10px; padding: 10px 12px; background: #fff; color: #20313f;
+            font-size: 13px;
+        }
+        .profile-field textarea { min-height: 85px; resize: vertical; }
+        .profile-field input:focus, .profile-field select:focus, .profile-field textarea:focus {
+            outline: 2px solid #b7dedd; outline-offset: 1px; border-color: #187c80;
+        }
+        .profile-field input:disabled, .profile-field input[readonly] {
+            background: #f5f7f9; color: #637381;
+        }
+        .profile-help { font-size: 11px; color: #84919d; margin-top: 6px; line-height: 1.5; }
+        .profile-form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+        .profile-save-button {
+            background: #187c80; color: white; border: 1px solid #187c80;
+            border-radius: 10px; padding: 10px 17px; font-size: 13px; font-weight: 650;
+        }
+        .profile-save-button:hover { background: #12666a; color: white; }
+        .profile-cancel-button {
+            background: white; color: #526270; border: 1px solid #dfe6ec;
+            border-radius: 10px; padding: 10px 17px; font-size: 13px; font-weight: 650;
+        }
+        .profile-cancel-button:hover { background: #f5f7f9; }
+
+        .profile-info-row { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #edf1f5; }
+        .profile-info-row:last-child { border-bottom: 0; padding-bottom: 0; }
+        .profile-info-icon { color: #187c80; font-size: 17px; width: 22px; flex-shrink: 0; }
+        .profile-info-label { color: #84919d; font-size: 11px; margin-bottom: 4px; }
+        .profile-info-value { color: #20313f; font-size: 13px; font-weight: 650; overflow-wrap: anywhere; }
+        .profile-note {
+            display: flex; gap: 10px; align-items: flex-start; padding: 14px;
+            border: 1px solid #e1edf5; background: #f1f7fb; border-radius: 12px;
+            color: #637381; font-size: 12px; line-height: 1.7; margin-top: 20px;
+        }
+        .profile-note i { color: #3978bd; font-size: 17px; }
+        .profile-preference {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+            padding: 15px 0; border-bottom: 1px solid #edf1f5;
+        }
+        .profile-preference:last-child { border-bottom: 0; padding-bottom: 0; }
+        .profile-preference strong { display: block; color: #20313f; font-size: 13px; margin-bottom: 4px; }
+        .profile-preference span { display: block; color: #84919d; font-size: 11px; line-height: 1.5; }
+        .profile-preference input[type="checkbox"] { width: 18px; height: 18px; accent-color: #187c80; flex-shrink: 0; }
+        .profile-footer { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 24px 0 8px; color: #84919d; font-size: 11px; }
+
+        @media (max-width: 850px) { .profile-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 520px) {
+            .profile-form-grid { grid-template-columns: 1fr; }
+            .profile-field.full-width { grid-column: auto; }
+            .profile-card { padding: 18px; }
+            .profile-hero { padding: 19px; }
+        }
+    </style>
+</head>
+<body>
+<div class="portal-layout">
+
+    <aside class="portal-sidebar" id="patientSidebar" aria-label="Patient navigation">
+        <a href="../../index.html" class="portal-brand text-decoration-none">
+            <span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+            <span>MedIntelliX</span>
+        </a>
+
+        <div class="sidebar-section-label">PATIENT PORTAL</div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
+            <a href="health-records.html" class="sidebar-link"><i class="bi bi-folder2-open"></i><span>Health records</span></a>
+            <a href="medical-reports.html" class="sidebar-link"><i class="bi bi-file-earmark-medical"></i><span>Medical reports</span></a>
+            <a href="medications.html" class="sidebar-link"><i class="bi bi-capsule"></i><span>Medications</span></a>
+            <a href="appointments.html" class="sidebar-link"><i class="bi bi-calendar2-check"></i><span>Appointments</span></a>
+            <a href="doctors.html" class="sidebar-link"><i class="bi bi-person-badge"></i><span>Doctors</span></a>
+            <a href="health-timeline.html" class="sidebar-link"><i class="bi bi-clock-history"></i><span>Health timeline</span></a>
+            <a href="profile.html" class="sidebar-link active" aria-current="page"><i class="bi bi-person-circle"></i><span>My profile</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-help">
+                <i class="bi bi-shield-check"></i>
+                <div><strong>Your health, your journey</strong><p>Manage your profile and preferences.</p></div>
+            </div>
+            <a href="../login.html" class="sidebar-link" id="logoutLink"><i class="bi bi-box-arrow-left"></i><span>Sign out</span></a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
+
+    <main class="portal-main">
+        <header class="portal-topbar">
+            <button class="sidebar-toggle" id="sidebarToggle" type="button"
+                    aria-label="Open navigation" aria-controls="patientSidebar" aria-expanded="false">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="topbar-page-title">
+                <span>Patient Portal</span>
+                <strong>My profile</strong>
+            </div>
+            <div class="topbar-actions">
+                <button class="topbar-icon-button" id="notificationButton" type="button" aria-label="Notifications">
+                    <i class="bi bi-bell"></i>
+                </button>
+                <a href="profile.html" class="topbar-profile text-decoration-none">
+                    <span class="topbar-avatar" id="profileInitials">P</span>
+                    <span class="topbar-profile-text"><strong id="patientName">Patient</strong><small>Patient</small></span>
+                </a>
+            </div>
+        </header>
+
+        <div class="portal-content">
+            <div class="profile-page">
+                <section class="profile-heading">
+                    <h1>My profile</h1>
+                    <p>Manage your personal details, emergency contact and account preferences.</p>
+                </section>
+
+                <section class="profile-hero">
+                    <div class="profile-avatar" id="profileAvatar">P</div>
+                    <div>
+                        <h2 id="profileDisplayName">Patient</h2>
+                        <p id="profileDisplayEmail">Not provided</p>
+                        <span class="profile-status"><i class="bi bi-person-check"></i> Patient account</span>
+                    </div>
+                </section>
+
+                <form id="profileForm">
+                    <div class="profile-layout">
+                        <div>
+                            <section class="profile-card">
+                                <div class="profile-card-heading">
+                                    <span class="profile-card-icon"><i class="bi bi-person-vcard"></i></span>
+                                    <div><h2>Personal information</h2><p>Update your basic profile details.</p></div>
+                                </div>
+
+                                <div class="profile-form-grid">
+                                    <div class="profile-field">
+                                        <label for="fullName">Full name</label>
+                                        <input id="fullName" name="fullName" type="text" value="" required minlength="2" maxlength="100" autocomplete="name" placeholder="Enter your full name">
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="dateOfBirth">Date of birth</label>
+                                        <input id="dateOfBirth" name="dateOfBirth" type="date" max="2026-10-20">
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="emailAddress">Email address</label>
+                                        <input id="emailAddress" name="emailAddress" type="email" value="" required maxlength="254" autocomplete="email" placeholder="Enter your email address">
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="phoneNumber">Phone number</label>
+                                        <input id="phoneNumber" name="phoneNumber" type="tel" value="" maxlength="20" autocomplete="tel" placeholder="Enter your phone number">
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="gender">Gender (optional)</label>
+                                        <select id="gender" name="gender">
+                                            <option value="">Prefer not to say</option>
+                                            <option value="female">Female</option>
+                                            <option value="male">Male</option>
+                                            <option value="nonbinary">Non-binary</option>
+                                            <option value="self-describe">Self-describe</option>
+                                        </select>
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="patientId">Demo patient ID</label>
+                                        <input id="patientId" type="text" value="PT-1024" readonly>
+                                        <div class="profile-help">Identifier assigned to your patient account.</div>
+                                    </div>
+                                    <div class="profile-field full-width">
+                                        <label for="address">Address</label>
+                                        <textarea id="address" name="address" maxlength="300" autocomplete="street-address" placeholder="Enter your address"></textarea>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="profile-card">
+                                <div class="profile-card-heading">
+                                    <span class="profile-card-icon"><i class="bi bi-heart-pulse"></i></span>
+                                    <div><h2>Emergency contact</h2><p>Optional contact details for emergency planning.</p></div>
+                                </div>
+
+                                <div class="profile-form-grid">
+                                    <div class="profile-field">
+                                        <label for="emergencyName">Contact name</label>
+                                        <input id="emergencyName" name="emergencyName" type="text" maxlength="100" placeholder="Enter contact name">
+                                    </div>
+                                    <div class="profile-field">
+                                        <label for="relationship">Relationship</label>
+                                        <select id="relationship" name="relationship">
+                                            <option value="">Select relationship</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="guardian">Guardian</option>
+                                            <option value="spouse">Spouse</option>
+                                            <option value="sibling">Sibling</option>
+                                            <option value="friend">Friend</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="profile-field full-width">
+                                        <label for="emergencyPhone">Contact phone</label>
+                                        <input id="emergencyPhone" name="emergencyPhone" type="tel" maxlength="20" placeholder="Enter contact phone number">
+                                    </div>
+                                </div>
+
+                                <div class="profile-form-actions">
+                                    <button type="submit" class="profile-save-button"><i class="bi bi-check2-circle me-2"></i>Save changes</button>
+                                    <button type="reset" class="profile-cancel-button">Reset form</button>
+                                </div>
+                                <div id="profileMessage" class="small mt-3" role="status" aria-live="polite" hidden></div>
+                            </section>
+                        </div>
+
+                        <div>
+                            <section class="profile-card">
+                                <div class="profile-card-heading">
+                                    <span class="profile-card-icon"><i class="bi bi-person-lines-fill"></i></span>
+                                    <div><h2>Profile summary</h2><p>Current details from this demo form.</p></div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <i class="bi bi-envelope profile-info-icon"></i>
+                                    <div><div class="profile-info-label">Email</div><div class="profile-info-value" id="summaryEmail">Not provided</div></div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <i class="bi bi-telephone profile-info-icon"></i>
+                                    <div><div class="profile-info-label">Phone</div><div class="profile-info-value" id="summaryPhone">Not provided</div></div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <i class="bi bi-calendar3 profile-info-icon"></i>
+                                    <div><div class="profile-info-label">Date of birth</div><div class="profile-info-value" id="summaryBirthDate">Not provided</div></div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <i class="bi bi-person-heart profile-info-icon"></i>
+                                    <div><div class="profile-info-label">Emergency contact</div><div class="profile-info-value" id="summaryEmergency">Not provided</div></div>
+                                </div>
+                            </section>
+
+                            <section class="profile-card">
+                                <div class="profile-card-heading">
+                                    <span class="profile-card-icon"><i class="bi bi-sliders"></i></span>
+                                    <div><h2>Preferences</h2><p>Choose your demo interface preferences.</p></div>
+                                </div>
+
+                                <div class="profile-preference">
+                                    <div><strong>Appointment reminders</strong><span>Show reminder preference in this demo.</span></div>
+                                    <input type="checkbox" id="appointmentReminders" checked aria-label="Appointment reminders preference">
+                                </div>
+                                <div class="profile-preference">
+                                    <div><strong>Health record updates</strong><span>Show record update preference in this demo.</span></div>
+                                    <input type="checkbox" id="recordUpdates" checked aria-label="Health record updates preference">
+                                </div>
+                                <div class="profile-preference">
+                                    <div><strong>Product announcements</strong><span>Show optional announcement preference.</span></div>
+                                    <input type="checkbox" id="productAnnouncements" aria-label="Product announcements preference">
+                                </div>
+                                <button type="button" class="profile-cancel-button w-100 mt-3" id="savePreferences">
+                                    Save preferences
+                                </button>
+                                <div id="preferencesMessage" class="small mt-2" role="status" aria-live="polite" hidden></div>
+                            </section>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="profile-note">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <div><strong>Privacy reminder:</strong> This is a frontend demonstration. Profile edits and preferences are not sent to a server or securely stored. Do not enter real patient information until authentication, protected storage and appropriate access controls are implemented.</div>
+                </div>
+
+                <footer class="profile-footer">
+                    <span>© <span id="profileYear"></span> MedIntelliX</span>
+                    <span>Designed with privacy in mind</span>
+                </footer>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/patient/profile.js"></script>
+</body>
+</html>

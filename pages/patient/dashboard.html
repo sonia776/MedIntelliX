@@ -63,6 +63,12 @@
                     <span>Dashboard</span>
                 </a>
 
+                <a href="#ai-assistant-section" class="sidebar-link" style="color: #0d9488; font-weight: 600; background: rgba(13, 148, 136, 0.08); border-radius: 8px;">
+                    <i class="bi bi-robot" style="color: #0d9488; font-size: 1.15rem;"></i>
+                    <span>AI Assistant (Gemini)</span>
+                    <span class="badge rounded-pill ms-auto" style="font-size: 10px; background-color: #0d9488; color: white;">LIVE</span>
+                </a>
+
                 <a href="health-records.html" class="sidebar-link">
                     <i class="bi bi-folder2-open"></i>
                     <span>Health Records</span>
@@ -429,6 +435,19 @@
 
                         <div class="quick-actions-list">
 
+                            <a href="#ai-assistant-section" class="quick-action" style="border-left: 3px solid #0d9488; background: #f0fdfa;">
+                                <span class="quick-action-icon" style="background: rgba(13, 148, 136, 0.15); color: #0d9488;">
+                                    <i class="bi bi-robot"></i>
+                                </span>
+
+                                <span class="quick-action-text">
+                                    <strong style="color: #0d9488;">AI Clinical Assistant</strong>
+                                    <small>Instant symptom triage &amp; lab explainer</small>
+                                </span>
+
+                                <i class="bi bi-arrow-down-circle-fill" style="color: #0d9488;"></i>
+                            </a>
+
                             <a href="health-records.html" class="quick-action">
                                 <span class="quick-action-icon">
                                     <i class="bi bi-folder-plus"></i>
@@ -495,7 +514,7 @@
                      CATEGORY 6: AI MEDICAL HEALTH ASSISTANT (LLM API)
                      Developer: Sonia (APIs & External Integrations)
                      ========================================================== -->
-                <section class="dashboard-panel ai-assistant-panel mb-4 p-4 rounded-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%); border-left: 5px solid #0d9488 !important;">
+                <section id="ai-assistant-section" class="dashboard-panel ai-assistant-panel mb-4 p-4 rounded-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%); border-left: 5px solid #0d9488 !important; scroll-margin-top: 80px;">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="rounded-circle d-grid place-items-center text-white" style="width: 48px; height: 48px; background: #0d9488; font-size: 22px;">
